@@ -11,6 +11,7 @@
     "validate:typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
@@ -29,6 +30,7 @@
     "@prisma/client": "^7.8.0",
     "@tailwindcss/postcss": "^4",
     "@types/css-modules": "^1.0.5",
+    "@types/emscripten": "^1.41.5",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
