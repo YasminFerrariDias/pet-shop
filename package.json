@@ -11,12 +11,15 @@
     "validate:typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "next": "15.5.4",
+    "prisma": "^7.8.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/client": "^7.8.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
