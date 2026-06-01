@@ -1,12 +1,16 @@
+import { cn } from "@/lib/utils"
 import { Appointment } from "@/types/appointment"
 
 type AppointmentCard = {
   appointment: Appointment
+  isFirsrInSection?: boolean
 }
 
-export const AppointmentCard = ({ appointment }: AppointmentCard) => {
+export const AppointmentCard = ({ appointment, isFirsrInSection = false }: AppointmentCard) => {
   return (
-    <div>
+    <div
+      className={cn("grid grid-cols-2 md:grid-cols-[15%_35%_30%_20%] items-center py-3", !isFirsrInSection && "border-t border-border-divisor")}
+    >
       <div className="text-left pr-4 md:pr-0">
         <span className="text-label-small-size text-content-primary font-semibold">
           {appointment.time}
@@ -18,10 +22,10 @@ export const AppointmentCard = ({ appointment }: AppointmentCard) => {
           <span className="text-label-small-size text-content-primary font-semibold">
             {appointment.petName}
           </span>
-          <span className="text-paragraph-small-size text-content-primary ">
+          <span className="text-paragraph-small-size text-content-secondary ">
             /
           </span>
-          <span className="text-paragraph-small-size text-content-primary ">
+          <span className="text-paragraph-small-size text-content-secondary ">
             {appointment.tutorName}
           </span>
         </div>
@@ -32,6 +36,6 @@ export const AppointmentCard = ({ appointment }: AppointmentCard) => {
           </span>
         </div>
       </div>
-    </div>
+    </div >
   )
 }
