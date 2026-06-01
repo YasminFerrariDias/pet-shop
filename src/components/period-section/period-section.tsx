@@ -25,6 +25,24 @@ export const PeriodSection = ({ period }: PeriodSectionProps) => {
           {period.timeRange}
         </span>
       </div>
-    </section>
+
+      {period.appointments.length > 0 ? (
+        <div className="px-5">
+          <div>
+            <div className="grid grid-cols-2 md:hidden text-label-small-size text-content-secondary mb-2">
+              <div>Horário</div>
+              <div className="text-right">Paciente</div>
+            </div>
+          </div>
+        </div>
+
+        {period.appointments.map((appointement, index) => (
+          <div key={index}>{appointement.petName}</div>
+        ))
+      }
+      ) : (
+      <p>Nenhum agendamento para este período</p>
+)}
+    </section >
   )
 }
