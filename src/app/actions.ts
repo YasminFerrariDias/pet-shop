@@ -2,6 +2,7 @@
 
 import z from 'zod';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 const appointmentSchema = z.object({
   tutorName: z.string(),
@@ -48,6 +49,8 @@ export async function createAppointment(data: AppointmentData) {
         ...parsedData,
       },
     });
+
+    revalidatePath('/');
 
     return { success: true };
   } catch (error) {

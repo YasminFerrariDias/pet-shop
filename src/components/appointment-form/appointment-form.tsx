@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -17,6 +17,7 @@ import { Calendar } from "../ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { toast } from "sonner";
 import { createAppointment } from "@/app/actions";
+import { useState } from "react";
 
 const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
@@ -45,6 +46,8 @@ const appointmentFormSchema = z.object({
 type AppointFormValues = z.infer<typeof appointmentFormSchema>;
 
 export const AppointmentForm = () => {
+  const [isOpen, setIsOpen] = useState(false)
+
   const form = useForm<AppointFormValues>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
@@ -71,14 +74,16 @@ export const AppointmentForm = () => {
     if (result?.error) {
       toast.error(result.error)
       return
-    } else {
-      toast.success(`Agendamento criado com sucesso!`)
-      form.reset()
     }
+
+    toast.success(`Agendamento criado com sucesso!`)
+
+    setIsOpen(false)
+    form.reset()
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="brand">Novo Agendamento</Button>
       </DialogTrigger>
