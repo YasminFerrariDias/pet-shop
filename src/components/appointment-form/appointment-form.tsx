@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form'
-import { CalendarIcon, ChevronDownIcon, Dog, Phone, User } from "lucide-react";
+import { CalendarIcon, ChevronDownIcon, Clock, Dog, Phone, User } from "lucide-react";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { IMaskInput } from "react-imask";
@@ -14,6 +14,7 @@ import { startOfToday, format, setMinutes, setHours } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
@@ -206,21 +207,32 @@ export const AppointmentForm = () => {
               )}
             />
 
-            <FormField control={form.control} name="description"
+            <FormField control={form.control} name="time"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-label-medium-size text-content-primary">
-                    Descrição do Serviço
+                    Hora
                   </FormLabel>
                   <FormControl>
-                    <div className='relative'>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-content-brand" />
+                          <SelectValue placeholder="--:-- --" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIME_OPTION.map((time) => (
+                          <SelectItem key={time} value={time}>
+                            {time}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                      <Textarea
-                        placeholder="Descrição do serviço"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
