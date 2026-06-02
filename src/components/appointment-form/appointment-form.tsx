@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { toast } from "sonner";
 
 const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
@@ -56,6 +57,13 @@ export const AppointmentForm = () => {
   })
 
   const onSubmit = (data: AppointFormValues) => {
+    const [hour, minute] = data.time.split(':')
+
+    const scheduleAt = new Date(data.scheduleAt)
+    scheduleAt.setHours(Number(hour), Number(minute), 0, 0);
+
+    toast.success(`Agendamento criado com sucesso!`)
+
     console.log(data)
   }
 
