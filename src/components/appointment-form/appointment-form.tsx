@@ -10,7 +10,7 @@ import { CalendarIcon, ChevronDownIcon, Dog, Phone, User } from "lucide-react";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { IMaskInput } from "react-imask";
-import { startOfToday, format } from "date-fns";
+import { startOfToday, format, setMinutes, setHours } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -24,7 +24,19 @@ const appointmentFormSchema = z.object({
     error: 'A data é obrigatória'
   }).min(startOfToday(), {
     message: 'A data não pode ser no passado'
-  })
+  }),
+  time: z.string().min(1, "A hora é obrigatória")
+}).refine((data) => {
+  const [hour, minute] = data.time.split(':')
+  const scheduleDateTime = setMinutes(
+    setHours(data.scheduleAt, Number(hour)),
+    Number(minute)
+  )
+
+  return scheduleDateTime > new Date()
+}, {
+  path: ['time'],
+  error: 'O horário não pode ser no passado'
 })
 
 type AppointFormValues = z.infer<typeof appointmentFormSchema>;
@@ -194,6 +206,27 @@ export const AppointmentForm = () => {
               )}
             />
 
+            <FormField control={form.control} name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-label-medium-size text-content-primary">
+                    Descrição do Serviço
+                  </FormLabel>
+                  <FormControl>
+                    <div className='relative'>
+
+                      <Textarea
+                        placeholder="Descrição do serviço"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <button type="submit">salvar</button>
           </form>
         </Form>
@@ -201,3 +234,20 @@ export const AppointmentForm = () => {
     </Dialog >
   )
 }
+
+const generateTimeOptions = (): string[] => {
+  const times = []
+
+  for (let hour = 9; hour <= 21; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      if (hour === 21 && minute > 0) break;
+      const timeString = `${hour.toString().padStart(2, '0')}:
+        ${minute.toString().padStart(2, '0')}`
+      times.push(timeString)
+    }
+  }
+
+  return times;
+}
+
+const TIME_OPTION = generateTimeOptions()
