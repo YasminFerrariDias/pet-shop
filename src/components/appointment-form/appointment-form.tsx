@@ -63,13 +63,18 @@ export const AppointmentForm = () => {
     const scheduleAt = new Date(data.scheduleAt)
     scheduleAt.setHours(Number(hour), Number(minute), 0, 0);
 
-    await createAppointment({
+    const result = await createAppointment({
       ...data,
       scheduleAt
     })
 
-    toast.success(`Agendamento criado com sucesso!`)
-    console.log(data)
+    if (result?.error) {
+      toast.error(result.error)
+      return
+    } else {
+      toast.success(`Agendamento criado com sucesso!`)
+      form.reset()
+    }
   }
 
   return (
@@ -276,8 +281,7 @@ const generateTimeOptions = (): string[] => {
   for (let hour = 9; hour <= 21; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
       if (hour === 21 && minute > 0) break;
-      const timeString = `${hour.toString().padStart(2, '0')}:
-        ${minute.toString().padStart(2, '0')}`
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
       times.push(timeString)
     }
   }

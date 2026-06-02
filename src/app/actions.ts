@@ -1,4 +1,7 @@
+'use server';
+
 import z from 'zod';
+import { prisma } from '@/lib/prisma';
 
 const appointmentSchema = z.object({
   tutorName: z.string(),
@@ -45,6 +48,8 @@ export async function createAppointment(data: AppointmentData) {
         ...parsedData,
       },
     });
+
+    return { success: true };
   } catch (error) {
     console.log(error);
   }
