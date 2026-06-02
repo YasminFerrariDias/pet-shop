@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { toast } from "sonner";
-import { createAppointment } from "@/app/actions";
+import { createAppointment, updateAppointment } from "@/app/actions";
 import { useEffect, useState } from "react";
 import { Appointment } from "@/types/appointment";
 
@@ -72,17 +72,24 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
     const scheduleAt = new Date(data.scheduleAt)
     scheduleAt.setHours(Number(hour), Number(minute), 0, 0);
 
-    const result = await createAppointment({
-      ...data,
-      scheduleAt
-    })
+    const isEdit = !!appointment?.id;
+
+    const result = isEdit
+      ? await updateAppointment(appointment.id, {
+        ...data,
+        scheduleAt,
+      })
+      : await createAppointment({
+        ...data,
+        scheduleAt
+      })
 
     if (result?.error) {
       toast.error(result.error)
       return
     }
 
-    toast.success(`Agendamento criado com sucesso!`)
+    toast.success(`Agendamento ${isEdit ? "atualizado" : "criado"} com sucesso!`)
 
     setIsOpen(false)
     form.reset()
@@ -94,7 +101,7 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+      {children && <DialogTrigger suppressHydrationWarning>{children}</DialogTrigger>}
 
       <DialogContent variant="appointment" overlayVariant="blurred" showCloseButton>
         <DialogHeader>

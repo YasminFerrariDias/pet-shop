@@ -42,7 +42,7 @@ export const AppointmentCard = ({ appointment, isFirsrInSection = false }: Appoi
 
       <div className="text-right mt-2 md:mt-0 col-span-1 flex justify-end items-center gap-2">
         <AppointmentForm appointment={appointment}>
-          <Button variant="edit" size="icon">
+          <Button variant="edit" size="icon" asChild>
             <EditIcon size={16} />
           </Button>
         </AppointmentForm>
