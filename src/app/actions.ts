@@ -15,6 +15,7 @@ const appointmentSchema = z.object({
 
 type AppointmentData = z.infer<typeof appointmentSchema>;
 
+// VALIDAÇÃO DO HORÁRIO
 export async function validadeAppointment(scheduleAt: Date) {
   const hour = parseInt(formatDateTime(scheduleAt));
 
@@ -30,6 +31,7 @@ export async function validadeAppointment(scheduleAt: Date) {
   return true;
 }
 
+// VALIDAÇÃO SE EXISTE ALGUM NO MESMO HORÁRIO
 export async function existenceQuery(scheduleAt: Date) {
   const existingAppointment = await prisma?.appointment.findFirst({
     where: {
@@ -44,6 +46,15 @@ export async function existenceQuery(scheduleAt: Date) {
   }
 
   return true;
+}
+
+// VALIDAÇÃO SE EXISTE AGENDAMENTO
+export async function appointmentExist(id: string) {
+  const appointment = await prisma.appointment.findUnique({
+    where: { id },
+  });
+
+  return appointment !== null;
 }
 
 // CRIAÇÃO DO AGENDAMENTO
@@ -66,7 +77,7 @@ export async function createAppointment(data: AppointmentData) {
     revalidatePath('/');
     return { success: true };
   } catch (error) {
-    console.log(error);
+    console.error('Erro ao criar agendamento: ', error);
     return { error: 'Erro ao criar o agendamento' };
   }
 }
@@ -85,6 +96,10 @@ export async function updateAppointment(id: string, data: AppointmentData) {
         id: { not: id },
       },
     });
+
+    const exists = await appointmentExist(id);
+    if (!exists) return { error: 'Agendamento não encontrado' };
+
     if (existingAppointment) {
       return { error: 'Este horário já está reservado' };
     }
@@ -98,16 +113,16 @@ export async function updateAppointment(id: string, data: AppointmentData) {
 
     return { success: true };
   } catch (error) {
-    console.log(error);
-
-    return {
-      error: 'Erro ao atualizar o agendamento',
-    };
+    console.error('Erro ao atualizar o agendamento: ', error);
+    return { error: 'Erro ao atualizar o agendamento' };
   }
 }
 
 export async function deleteAppointment(id: string) {
   try {
+    const exists = await appointmentExist(id);
+    if (!exists) return { error: 'Agendamento não encontrado' };
+
     await prisma.appointment.delete({
       where: { id },
     });
