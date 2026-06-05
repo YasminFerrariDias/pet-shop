@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { Slot } from '@radix-ui/react-slot';
 import { XIcon } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
@@ -13,11 +14,22 @@ function Dialog({
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
-function DialogTrigger({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
-}
+const DialogTrigger = React.forwardRef<any, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Trigger>>(
+  ({ children, asChild = true, ...props }, ref) => {
+    return (
+      <DialogPrimitive.Trigger
+        ref={ref}
+        asChild={asChild}
+        data-slot="dialog-trigger"
+        {...props}
+      >
+        {asChild ? <Slot>{children}</Slot> : children}
+      </DialogPrimitive.Trigger>
+    );
+  }
+);
+
+DialogTrigger.displayName = 'DialogTrigger';
 
 function DialogPortal({
   ...props
@@ -25,11 +37,13 @@ function DialogPortal({
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
 
-function DialogClose({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
-}
+const DialogClose = React.forwardRef<any, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close>>(
+  ({ ...props }, ref) => {
+    return <DialogPrimitive.Close ref={ref} data-slot="dialog-close" {...props} />;
+  }
+);
+
+DialogClose.displayName = 'DialogClose';
 
 // Variantes para DialogOverlay
 const dialogOverlayVariants = cva(

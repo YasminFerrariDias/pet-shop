@@ -101,7 +101,11 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      {children && <DialogTrigger suppressHydrationWarning>{children}</DialogTrigger>}
+      {children && (
+        <DialogTrigger>
+          {children}
+        </DialogTrigger>
+      )}
 
       <DialogContent variant="appointment" overlayVariant="blurred" showCloseButton>
         <DialogHeader>
@@ -258,11 +262,9 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <SelectTrigger>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-content-brand" />
-                            <SelectValue placeholder="--:-- --" />
-                          </div>
+                        <SelectTrigger className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-content-brand" />
+                          <SelectValue placeholder="--:-- --" />
                         </SelectTrigger>
                         <SelectContent>
                           {TIME_OPTION.map((time) => (
