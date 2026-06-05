@@ -12,10 +12,10 @@ import { toast } from "sonner"
 
 type AppointmentCard = {
   appointment: Appointment
-  isFirsrInSection?: boolean
+  isFirstInSection?: boolean
 }
 
-export const AppointmentCard = ({ appointment, isFirsrInSection = false }: AppointmentCard) => {
+export const AppointmentCard = ({ appointment, isFirstInSection = false }: AppointmentCard) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -34,7 +34,7 @@ export const AppointmentCard = ({ appointment, isFirsrInSection = false }: Appoi
 
   return (
     <div
-      className={cn("grid grid-cols-2 md:grid-cols-[15%_35%_30%_20%] items-center py-3", !isFirsrInSection && "border-t border-border-divisor")}
+      className={cn("grid grid-cols-2 md:grid-cols-[15%_35%_30%_20%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
     >
       <div className="text-left pr-4 md:pr-0">
         <span className="text-label-small-size text-content-primary font-semibold">

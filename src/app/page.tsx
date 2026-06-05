@@ -11,7 +11,7 @@ import { endOfDay, parseISO, startOfDay } from "date-fns";
 export default async function Home({
   searchParams
 }: {
-  searchParams: Promise<{ date: string }>
+  searchParams: Promise<{ date?: string }>
 }) {
   const { date } = await searchParams
   const selectedDate = date ? parseISO(date) : new Date()
@@ -52,8 +52,8 @@ export default async function Home({
       </div>
 
       <div className="pb-24 md:pb-0">
-        {periods.map((period, index) => (
-          <PeriodSection period={period} key={index} />
+        {periods.map((period) => (
+          <PeriodSection period={period} key={period.type} />
         ))}
       </div>
 

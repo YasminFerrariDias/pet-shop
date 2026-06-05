@@ -16,7 +16,7 @@ const appointmentSchema = z.object({
 type AppointmentData = z.infer<typeof appointmentSchema>;
 
 // VALIDAÇÃO DO HORÁRIO
-export async function validadeAppointment(scheduleAt: Date) {
+export async function validateAppointment(scheduleAt: Date) {
   const hour = parseInt(formatDateTime(scheduleAt));
 
   const { isMorning, isAfternoon, isEvening } = calculatePeriod(hour);
@@ -62,7 +62,7 @@ export async function createAppointment(data: AppointmentData) {
   try {
     const parsedData = appointmentSchema.parse(data);
 
-    const validation = await validadeAppointment(parsedData.scheduleAt);
+    const validation = await validateAppointment(parsedData.scheduleAt);
     if (validation !== true) return validation;
 
     const conflict = await existenceQuery(parsedData.scheduleAt);
@@ -87,7 +87,7 @@ export async function updateAppointment(id: string, data: AppointmentData) {
   try {
     const parsedData = appointmentSchema.parse(data);
 
-    const validation = await validadeAppointment(parsedData.scheduleAt);
+    const validation = await validateAppointment(parsedData.scheduleAt);
     if (validation !== true) return validation;
 
     const existingAppointment = await prisma?.appointment.findFirst({

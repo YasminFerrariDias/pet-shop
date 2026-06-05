@@ -89,7 +89,7 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
         scheduleAt
       })
 
-    if (result?.error) {
+    if ('error' in result) {
       toast.error(result.error)
       return
     }

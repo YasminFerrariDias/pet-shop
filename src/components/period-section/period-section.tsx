@@ -30,8 +30,8 @@ export const PeriodSection = ({ period }: PeriodSectionProps) => {
       {period.appointments.length > 0 ? (
         <div className="px-5">
           <div>
-            {period.appointments.map((Appointment, index) => (
-              <AppointmentCard key={index} appointment={Appointment} isFirsrInSection={index === 0} />
+            {period.appointments.map((appointment, index) => (
+              <AppointmentCard key={appointment.id} appointment={appointment} isFirstInSection={index === 0} />
             ))}
 
           </div>
