@@ -30,24 +30,32 @@ export async function validadeAppointment(scheduleAt: Date) {
   return true;
 }
 
+export async function existenceQuery(scheduleAt: Date) {
+  const existingAppointment = await prisma?.appointment.findFirst({
+    where: {
+      scheduleAt,
+    },
+  });
+
+  if (existingAppointment) {
+    return {
+      error: 'Este horário já está reservado',
+    };
+  }
+
+  return true;
+}
+
+// CRIAÇÃO DO AGENDAMENTO
 export async function createAppointment(data: AppointmentData) {
   try {
     const parsedData = appointmentSchema.parse(data);
-    const { scheduleAt } = parsedData;
 
-    validadeAppointment(parsedData.scheduleAt);
+    const validation = await validadeAppointment(parsedData.scheduleAt);
+    if (validation !== true) return validation;
 
-    const existingAppointment = await prisma?.appointment.findFirst({
-      where: {
-        scheduleAt,
-      },
-    });
-
-    if (existingAppointment) {
-      return {
-        error: 'Este horário já está reservado',
-      };
-    }
+    const conflict = await existenceQuery(parsedData.scheduleAt);
+    if (conflict !== true) return conflict;
 
     await prisma?.appointment.create({
       data: {
@@ -56,40 +64,34 @@ export async function createAppointment(data: AppointmentData) {
     });
 
     revalidatePath('/');
-
     return { success: true };
   } catch (error) {
     console.log(error);
-
-    return {
-      error: 'Erro ao criar o agendamento',
-    };
+    return { error: 'Erro ao criar o agendamento' };
   }
 }
 
+// ATUALIZAÇÃO DO AGENDAMENTO
 export async function updateAppointment(id: string, data: AppointmentData) {
   try {
     const parsedData = appointmentSchema.parse(data);
-    const { scheduleAt } = parsedData;
 
-    validadeAppointment(parsedData.scheduleAt);
+    const validation = await validadeAppointment(parsedData.scheduleAt);
+    if (validation !== true) return validation;
 
     const existingAppointment = await prisma?.appointment.findFirst({
       where: {
-        scheduleAt,
+        scheduleAt: parsedData.scheduleAt,
+        id: { not: id },
       },
     });
-
     if (existingAppointment) {
-      return {
-        error: 'Este horário já está reservado',
-      };
+      return { error: 'Este horário já está reservado' };
     }
 
-    await prisma?.appointment.create({
-      data: {
-        ...parsedData,
-      },
+    await prisma.appointment.update({
+      where: { id },
+      data: parsedData,
     });
 
     revalidatePath('/');
@@ -99,7 +101,7 @@ export async function updateAppointment(id: string, data: AppointmentData) {
     console.log(error);
 
     return {
-      error: 'Erro ao criar o agendamento',
+      error: 'Erro ao atualizar o agendamento',
     };
   }
 }
@@ -107,9 +109,7 @@ export async function updateAppointment(id: string, data: AppointmentData) {
 export async function deleteAppointment(id: string) {
   try {
     await prisma.appointment.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     revalidatePath('/');
