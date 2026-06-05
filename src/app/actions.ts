@@ -3,7 +3,8 @@
 import z from 'zod';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { calculatePeriod, formatDateTime } from '@/utils';
+import { calculatePeriod } from '@/utils';
+import { addMinutes, startOfMinute } from 'date-fns';
 
 const appointmentSchema = z.object({
   tutorName: z.string(),
@@ -17,7 +18,7 @@ type AppointmentData = z.infer<typeof appointmentSchema>;
 
 // VALIDAÇÃO DO HORÁRIO
 export async function validateAppointment(scheduleAt: Date) {
-  const hour = parseInt(formatDateTime(scheduleAt));
+  const hour = scheduleAt.getHours();
 
   const { isMorning, isAfternoon, isEvening } = calculatePeriod(hour);
 
@@ -35,7 +36,10 @@ export async function validateAppointment(scheduleAt: Date) {
 export async function existenceQuery(scheduleAt: Date) {
   const existingAppointment = await prisma?.appointment.findFirst({
     where: {
-      scheduleAt,
+      scheduleAt: {
+        gte: startOfMinute(scheduleAt),
+        lte: addMinutes(startOfMinute(scheduleAt), 1),
+      },
     },
   });
 
