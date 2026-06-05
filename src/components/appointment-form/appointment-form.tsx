@@ -33,6 +33,7 @@ const appointmentFormSchema = z.object({
   time: z.string().min(1, "A hora é obrigatória")
 }).refine((data) => {
   const [hour, minute] = data.time.split(':')
+
   const scheduleDateTime = setMinutes(
     setHours(data.scheduleAt, Number(hour)),
     Number(minute)
@@ -69,8 +70,10 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
   const onSubmit = async (data: AppointFormValues) => {
     const [hour, minute] = data.time.split(':')
 
-    const scheduleAt = new Date(data.scheduleAt)
-    scheduleAt.setHours(Number(hour), Number(minute), 0, 0);
+    const scheduleAt = setMinutes( // etapa 2 - ajusta o minuto
+      setHours(data.scheduleAt, Number(hour)), // etapa 1 - ajusta a hora
+      Number(minute)
+    )
 
     const isEdit = !!appointment?.id;
 
