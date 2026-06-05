@@ -6,7 +6,7 @@ import { PeriodSection } from "@/components/period-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 import { groupAppointmentByPeriod } from "@/utils";
-import { endOfDay, parseISO, startOfDay } from "date-fns";
+import { endOfDay, isValid, parseISO, startOfDay } from "date-fns";
 
 export default async function Home({
   searchParams
@@ -14,7 +14,8 @@ export default async function Home({
   searchParams: Promise<{ date?: string }>
 }) {
   const { date } = await searchParams
-  const selectedDate = date ? parseISO(date) : new Date()
+  const parsedDate = date ? parseISO(date) : new Date()
+  const selectedDate = isValid(parsedDate) ? parsedDate : new Date()
 
   const appointments = await prisma.appointment.findMany({
     where: {
