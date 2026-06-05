@@ -11,14 +11,14 @@ export const getPeriod = (hour: number): AppointmentPeriodDay => {
   return 'evening';
 };
 
-export function groupAppointementByPeriod(
-  appointements: AppointmentPrisma[]
+export function groupAppointmentByPeriod(
+  Appointments: AppointmentPrisma[]
 ): AppointmentPeriod[] {
-  const transformedAppointments: Appointment[] = appointements?.map((apt) => ({
+  const transformedAppointments: Appointment[] = Appointments?.map((apt) => ({
     ...apt,
     time: formatDateTime(apt.scheduleAt),
     service: apt.description,
-    period: getPeriod(parseInt(formatDateTime(apt.scheduleAt))),
+    period: getPeriod(getHoursFromTimeString(formatDateTime(apt.scheduleAt))),
   }));
 
   const morningAppointments = transformedAppointments.filter(
@@ -72,4 +72,8 @@ export function formatDateTime(date: Date): string {
     hour12: false,
     timeZone: 'America/Sao_Paulo',
   });
+}
+
+export function getHoursFromTimeString(timeStr: string): number {
+  return parseInt(timeStr.split(':')[0]);
 }

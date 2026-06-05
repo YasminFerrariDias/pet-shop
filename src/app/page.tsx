@@ -5,7 +5,7 @@ import { DatePicker } from "@/components/date-picker";
 import { PeriodSection } from "@/components/period-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
-import { groupAppointementByPeriod } from "@/utils";
+import { groupAppointmentByPeriod } from "@/utils";
 import { endOfDay, parseISO, startOfDay } from "date-fns";
 
 export default async function Home({
@@ -28,7 +28,7 @@ export default async function Home({
     }
   });
 
-  const periods = groupAppointementByPeriod(appointments)
+  const periods = groupAppointmentByPeriod(appointments)
 
   return (
     <div className="bg-background-primary p-6">
