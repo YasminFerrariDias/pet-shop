@@ -35,16 +35,24 @@ const appointmentFormSchema = z.object({
   })
 }).refine((data) => {
   const [hour, minute] = data.time.split(':')
+  const hourNum = Number(hour)
+
+  const isValidHour =
+    (hourNum >= 9 && hourNum < 12) ||
+    (hourNum >= 13 && hourNum < 18) ||
+    (hourNum >= 19 && hourNum < 21)
+
+  if (!isValidHour) return false
 
   const scheduleDateTime = setMinutes(
-    setHours(data.scheduleAt, Number(hour)),
+    setHours(data.scheduleAt, hourNum),
     Number(minute)
   )
 
   return scheduleDateTime > new Date()
 }, {
   path: ['time'],
-  error: 'O horário não pode ser no passado'
+  error: 'Horário inválido. Atendimento apenas: 09h-12h, 13h-18h ou 19h-21h'
 })
 
 type AppointFormValues = z.infer<typeof appointmentFormSchema>;
@@ -306,7 +314,7 @@ const generateTimeOptions = (): string[] => {
   const times = []
 
   for (let hour = 9; hour <= 21; hour++) {
-    for (let minute = 0; minute < 60; minute += 30) {
+    for (let minute = 0; minute < 60; minute += 15) {
       if (hour === 21 && minute > 0) break;
       const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
       times.push(timeString)
@@ -316,4 +324,7 @@ const generateTimeOptions = (): string[] => {
   return times;
 }
 
-const TIME_OPTION = generateTimeOptions()
+const TIME_OPTION = generateTimeOptions().filter((time) => {
+  const hour = parseInt(time.split(':')[0])
+  return (hour >= 9 && hour < 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour < 21)
+})
