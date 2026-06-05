@@ -30,7 +30,9 @@ const appointmentFormSchema = z.object({
   }).min(startOfToday(), {
     message: 'A data não pode ser no passado'
   }),
-  time: z.string().min(1, "A hora é obrigatória")
+  time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Formato inválido. Use HH:mm (ex: 14:30)"
+  })
 }).refine((data) => {
   const [hour, minute] = data.time.split(':')
 
