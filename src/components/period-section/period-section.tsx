@@ -19,7 +19,7 @@ export const PeriodSection = ({ period }: PeriodSectionProps) => {
         <div className="flex items-center gap-2">
           {periodIcons[period?.type]}
           <h2 className="text-label-large-size text-content-primary">
-            {period?.type}
+            {period?.title}
           </h2>
         </div>
         <span className="text-label-large-size text-content-secondary">
