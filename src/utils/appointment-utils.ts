@@ -5,21 +5,28 @@ import {
   AppointmentPeriodDay,
 } from '@/types/appointment';
 
-export const getPeriod = (hour: number): AppointmentPeriodDay => {
+export const getPeriod = (hour: number): AppointmentPeriodDay | null => {
   if (hour >= 9 && hour < 12) return 'morning';
   if (hour >= 13 && hour < 18) return 'afternoon';
-  return 'evening';
+  if (hour >= 19 && hour < 21) return 'evening';
+
+  return null;
 };
 
 export function groupAppointmentByPeriod(
   Appointments: AppointmentPrisma[]
 ): AppointmentPeriod[] {
-  const transformedAppointments: Appointment[] = Appointments?.map((apt) => ({
-    ...apt,
-    time: formatDateTime(apt.scheduleAt),
-    service: apt.description,
-    period: getPeriod(getHoursFromTimeString(formatDateTime(apt.scheduleAt))),
-  }));
+  const transformedAppointments: Appointment[] = Appointments?.map((apt) => {
+    const period = getPeriod(apt.scheduleAt.getHours());
+    if (!period) return null;
+
+    return {
+      ...apt,
+      time: formatDateTime(apt.scheduleAt),
+      description: apt.description,
+      period,
+    };
+  }).filter((item): item is Appointment => item !== null);
 
   const morningAppointments = transformedAppointments.filter(
     (apt) => apt.period === 'morning'
