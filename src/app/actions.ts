@@ -3,7 +3,6 @@
 import z from 'zod';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { calculatePeriod } from '@/utils';
 import { addMinutes, startOfMinute } from 'date-fns';
 
 const appointmentSchema = z.object({
@@ -18,11 +17,25 @@ type AppointmentData = z.infer<typeof appointmentSchema>;
 
 // VALIDAÇÃO DO HORÁRIO
 export async function validateAppointment(scheduleAt: Date) {
+  const now = new Date();
+  if (scheduleAt <= now) {
+    return {
+      error: 'O horário não pode ser no passado',
+    };
+  }
+
   const hour = scheduleAt.getHours();
+  const minute = scheduleAt.getMinutes();
 
-  const { isMorning, isAfternoon, isEvening } = calculatePeriod(hour);
+  const isValidTime =
+    (hour >= 9 && hour < 12) ||
+    (hour === 12 && minute === 0) ||
+    (hour >= 13 && hour < 18) ||
+    (hour === 18 && minute === 0) ||
+    (hour >= 19 && hour < 21) ||
+    (hour === 21 && minute === 0)
 
-  if (!isMorning && !isAfternoon && !isEvening) {
+  if (!isValidTime) {
     return {
       error:
         'Agendamentos só podem ser feitos entre 9h e 12h, 13h e 18h ou 19h e 21h',
