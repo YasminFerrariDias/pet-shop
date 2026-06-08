@@ -8,7 +8,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form'
 import { DollarSign, Loader2, Timer, User } from "lucide-react";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { IMask, IMaskInput } from "react-imask";
 import { toast } from "sonner";
 import { createService, updateService } from "@/app/actions-service";
@@ -65,6 +64,10 @@ export const ServiceForm = ({ service, children }: ServiceFormProps) => {
     setIsOpen(false);
     form.reset();
   };
+
+  useEffect(() => {
+    form.reset(service);
+  }, [service, form])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
