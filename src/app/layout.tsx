@@ -18,7 +18,7 @@ const interTight = Inter({
 
 export const metadata: Metadata = {
   title: "Mundo PET",
-  description: "Aqui você pode ver todos os clientes e servções agendados para hoje!",
+  description: "Aqui você pode ver todos os clientes e servições agendados para hoje!",
 };
 
 export default function RootLayout({

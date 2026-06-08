@@ -6,7 +6,7 @@ export type Appointment = {
   petName: string;
   tutorName: string;
   phone: string;
-  description: string;
+
   scheduleAt: Date;
   period: AppointmentPeriodDay;
 };

@@ -58,7 +58,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false }: Appoi
       </div>
       <div className="text-left pr-4 hidden md:block mt-1 md:mt-0 col-span-2 md:col-span-1">
         <span className="text-paragraph-small-size text-content-secondary">
-          {appointment.description}
+
         </span>
       </div>
 

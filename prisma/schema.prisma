@@ -18,7 +18,7 @@ model Appointment {
   tutorName   String
   petName     String
   phone       String
-  description String
+  servicesIds String[]
   scheduleAt  DateTime
 
   @@map("appointments")

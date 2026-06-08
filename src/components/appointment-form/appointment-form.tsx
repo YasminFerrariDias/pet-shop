@@ -24,7 +24,7 @@ const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
   petName: z.string().min(3, "O nome do pet é obrigatório"),
   phone: z.string().min(11, "O telefone é obrigatório"),
-  description: z.string().min(3, "A descrição é obrigatória"),
+
   scheduleAt: z.date({
     error: 'A data é obrigatória'
   }).min(startOfToday(), {
@@ -71,7 +71,7 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
       tutorName: '',
       petName: '',
       phone: '',
-      description: '',
+
       scheduleAt: undefined,
       time: ''
     }
@@ -199,6 +199,7 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
               )}
             />
 
+// MUDAR
             <FormField control={form.control} name="description"
               render={({ field }) => (
                 <FormItem>

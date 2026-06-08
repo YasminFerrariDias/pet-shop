@@ -23,6 +23,7 @@ export function groupAppointmentByPeriod(
     return {
       ...apt,
       time: formatDateTime(apt.scheduleAt),
+      // MUDAR
       description: apt.description,
       period,
     };
