@@ -20,6 +20,7 @@ import { createAppointment, updateAppointment } from "@/app/actions-appointment"
 import { useEffect, useState } from "react";
 import { Appointment } from "@/types/appointment";
 import { Service } from "@/types/service";
+import { Tag } from "../tag";
 
 const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
@@ -205,17 +206,18 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-label-medium-size text-content-primary">
-                    Descrição do Serviço
+                    Serviços
                   </FormLabel>
                   <FormControl>
-                    <div className='relative'>
+                    <div className='relative flex gap-3'>
                       {allServices?.map((service) => (
-                        <span
+                        <Tag
                           key={service.id}
-                          className="bg-accent-primary-light m-2"
+                          isSelect
+
                         >
                           {service.serviceName}
-                        </span>
+                        </Tag>
                       ))}
                     </div>
                   </FormControl>
