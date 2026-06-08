@@ -7,7 +7,7 @@ import { Button } from "../ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "lucide-react"
 import { useState } from "react"
-import { deleteAppointment } from "@/app/actions"
+import { deleteAppointment } from "@/app/actions-appointment"
 import { toast } from "sonner"
 
 type AppointmentCard = {

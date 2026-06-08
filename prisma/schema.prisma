@@ -26,7 +26,7 @@ model Appointment {
 
 model Service {
   id          String   @id @default(cuid())
-  name        String
+  serviceName String
   duration    Int
   price       Float
   observation String?

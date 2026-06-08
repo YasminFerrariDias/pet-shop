@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { toast } from "sonner";
-import { createAppointment, updateAppointment } from "@/app/actions";
+import { createAppointment, updateAppointment } from "@/app/actions-appointment";
 import { useEffect, useState } from "react";
 import { Appointment } from "@/types/appointment";
 
