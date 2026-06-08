@@ -23,3 +23,15 @@ model Appointment {
 
   @@map("appointments")
 }
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  duration    Int
+  price       Float
+  observation String?
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
+
+  @@map("services")
+}

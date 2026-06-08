@@ -37,7 +37,7 @@ const appointmentFormSchema = z.object({
   const [hour, minute] = data.time.split(':')
   const hourNum = Number(hour)
 
-  const isValidHour =
+  const isValidHour = 
     (hourNum >= 9 && hourNum <= 12) ||
     (hourNum >= 13 && hourNum <= 18) ||
     (hourNum >= 19 && hourNum <= 21)

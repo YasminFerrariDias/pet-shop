@@ -33,7 +33,7 @@ export async function validateAppointment(scheduleAt: Date) {
     (hour >= 13 && hour < 18) ||
     (hour === 18 && minute === 0) ||
     (hour >= 19 && hour < 21) ||
-    (hour === 21 && minute === 0)
+    (hour === 21 && minute === 0);
 
   if (!isValidTime) {
     return {
