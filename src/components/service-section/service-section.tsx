@@ -29,7 +29,9 @@ export const ServiceSection = ({ services }: ServiceSectionProps) => {
           </div>
         </div>
       ) : (
-        <p className="text-paragraph-small-size text-content-secondary p-5">Nenhum serviço foi cadastrado!</p>
+        <p className="text-paragraph-small-size text-content-secondary p-5">
+          Nenhum serviço foi cadastrado!
+        </p>
       )}
     </section >
   )

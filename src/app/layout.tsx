@@ -31,7 +31,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${interTight.variable} antialiased`}>
         <Header />
 
-        <div className="max-w-3xl mx-auto">
+        <div className="">
           <main className="flex-1 flex flex-col mt-12">
             {children}
             <Toaster position="top-right" />

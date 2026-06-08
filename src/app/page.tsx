@@ -47,7 +47,7 @@ export default async function Home({
 
   return (
     <div className="bg-background-primary p-6">
-      <div className="flex items-center justify-between mb-8 gap-4">
+      <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto">
         <div>
           <h1 className="text-title-size text-content-primary mb-2">
             Sua Agenda
@@ -66,20 +66,19 @@ export default async function Home({
         <DatePicker />
       </div>
 
-      <div className="flex flex-col md:flex-row gap-5">
-        <div className="w-full md:w-550">
+      <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">
+        <div className="flex-1">
           {periods.map((period) => (
             <PeriodSection period={period} key={period.type} />
           ))}
         </div>
 
-        <div className="pb-24 md:pb-0 md:w-450">
+        <div className="md:w-90 shrink-0">
           <ServiceSection services={formattedServices} />
         </div>
       </div>
 
-      <div className="fixed gap-2 flex-row bottom-0 left-0 right-0 flex justify-center bg-[#232420] py-4.5 px-6 
-      md:bottom-6 md:right-6 md:left-auto md:top-auto md:w-auto md:bg-transparent md:p-0">
+      <div className="fixed gap-2 flex-row bottom-0 left-0 right-0 flex justify-center bg-[#232420] py-4.5 px-6 md:bottom-6 md:right-6 md:left-auto md:top-auto md:w-auto md:bg-transparent md:p-0">
         <ServiceForm>
           <Button variant="brand">
             Novo Serviço
