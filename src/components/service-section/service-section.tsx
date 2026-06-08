@@ -15,7 +15,7 @@ export const ServiceSection = ({ services }: ServiceSectionProps) => {
           </h2>
         </div>
         <span className="text-label-large-size text-content-secondary">
-          <p>100</p>
+          {services.length}
         </span>
       </div>
 
