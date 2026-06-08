@@ -111,7 +111,25 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
   }
 
   useEffect(() => {
-    form.reset(appointment);
+    if (appointment) {
+      form.reset({
+        tutorName: appointment.tutorName,
+        petName: appointment.petName,
+        phone: appointment.phone,
+        servicesIds: appointment.servicesIds || [],
+        scheduleAt: appointment.scheduleAt,
+        time: appointment.time || '',
+      })
+    } else {
+      form.reset({
+        tutorName: '',
+        petName: '',
+        phone: '',
+        servicesIds: [],
+        scheduleAt: undefined,
+        time: '',
+      })
+    }
   }, [appointment, form])
 
   return (
@@ -210,7 +228,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                   <FormControl>
                     <TagSelector
                       allServices={allServices}
-                      selectIds={field.value}
+                      selectedIds={field.value}
                       onChange={field.onChange}
                     />
                   </FormControl>

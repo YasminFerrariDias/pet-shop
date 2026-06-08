@@ -68,7 +68,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
       </div>
 
       <div className="text-right mt-2 md:mt-0 col-span-2 md:col-span-1 flex justify-end items-center gap-2">
-        <AppointmentForm appointment={appointment}>
+        <AppointmentForm appointment={appointment} allServices={allServices}>
           <Button variant="edit" size="icon">
             <EditIcon size={16} />
           </Button>
