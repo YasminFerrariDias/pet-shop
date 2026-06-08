@@ -42,24 +42,18 @@ export const ServiceForm = ({ service, children }: ServiceFormProps) => {
   })
 
   const onSubmit = async (data: ServiceFormValues) => {
-    console.log('Dados enviados:', data);  // ← Veja o que está saindo do formulário
-
     const isEdit = !!service?.id;
 
     const result = isEdit
       ? await updateService(service.id, { ...data })
       : await createService({ ...data });
 
-    console.log('Resultado da operação:', result);  // ← Veja o retorno da action
-
     if ('error' in result) {
       toast.error(result.error);
-      console.error('Erro:', result.error);  // ← Veja erro no console
       return;
     }
 
     toast.success(`Cadastro ${isEdit ? "atualizado" : "criado"} com sucesso!`);
-    console.log('Sucesso! Dados salvos no banco');  // ← Confirmação
 
     setIsOpen(false);
     form.reset();
