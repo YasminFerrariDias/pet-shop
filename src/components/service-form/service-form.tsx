@@ -6,95 +6,53 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form'
-import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
+import { DollarSign, Loader2, Timer, User } from "lucide-react";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { IMaskInput } from "react-imask";
-import { startOfToday, format, setMinutes, setHours } from "date-fns";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { Calendar } from "../ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { IMask, IMaskInput } from "react-imask";
 import { toast } from "sonner";
-import { createAppointment, updateAppointment } from "@/app/actions";
+//import { createService, updateService } from "@/app/actions";
 import { useEffect, useState } from "react";
-import { Appointment } from "@/types/appointment";
+//import { Service } from "@/types/service";
 
-const appointmentFormSchema = z.object({
-  tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
-  petName: z.string().min(3, "O nome do pet é obrigatório"),
-  phone: z.string().min(11, "O telefone é obrigatório"),
-  description: z.string().min(3, "A descrição é obrigatória"),
-  scheduleAt: z.date({
-    error: 'A data é obrigatória'
-  }).min(startOfToday(), {
-    message: 'A data não pode ser no passado'
-  }),
-  time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+const serviceFormSchema = z.object({
+  serviceName: z.string().min(3, "O nome do serviço é obrigatório"),
+  duration: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
     message: "Formato inválido. Use HH:mm (ex: 14:30)"
-  })
-}).refine((data) => {
-  const [hour, minute] = data.time.split(':')
-  const hourNum = Number(hour)
-
-  const isValidHour =
-    (hourNum >= 9 && hourNum <= 12) ||
-    (hourNum >= 13 && hourNum <= 18) ||
-    (hourNum >= 19 && hourNum <= 21)
-
-  if (!isValidHour) return false
-
-  const scheduleDateTime = setMinutes(
-    setHours(data.scheduleAt, hourNum),
-    Number(minute)
-  )
-
-  return scheduleDateTime > new Date()
-}, {
-  path: ['time'],
-  error: 'Horário inválido. Atendimento apenas: 09h-12h, 13h-18h ou 19h-21h'
+  }),
+  price: z.string().min(1, "O preço do serviço é obrigatório"),
+  observation: z.string().min(0, "A descrição é opcional"),
 })
 
-type AppointFormValues = z.infer<typeof appointmentFormSchema>;
+type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 
-type AppointmentFormProps = {
-  appointment?: Appointment;
+type ServiceFormProps = {
+  service?: Service;
   children?: React.ReactNode;
 }
 
-export const ServiceForm = ({ appointment, children }: AppointmentFormProps) => {
+export const ServiceForm = ({ service, children }: ServiceFormProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const form = useForm<AppointFormValues>({
-    resolver: zodResolver(appointmentFormSchema),
+  const form = useForm<ServiceFormValues>({
+    resolver: zodResolver(serviceFormSchema),
     defaultValues: {
-      tutorName: '',
-      petName: '',
-      phone: '',
-      description: '',
-      scheduleAt: undefined,
-      time: ''
+      serviceName: '',
+      duration: '',
+      price: '',
+      observation: '',
     }
   })
 
-  const onSubmit = async (data: AppointFormValues) => {
-    const [hour, minute] = data.time.split(':')
-
-    const scheduleAt = setMinutes( // etapa 2 - ajusta o minuto
-      setHours(data.scheduleAt, Number(hour)), // etapa 1 - ajusta a hora
-      Number(minute)
-    )
-
-    const isEdit = !!appointment?.id;
+  const onSubmit = async (data: ServiceFormValues) => {
+    const isEdit = !!service?.id;
 
     const result = isEdit
-      ? await updateAppointment(appointment.id, {
+      ? await updateService(service.id, {
         ...data,
-        scheduleAt,
       })
-      : await createAppointment({
+      : await createService({
         ...data,
-        scheduleAt
       })
 
     if ('error' in result) {
@@ -102,15 +60,15 @@ export const ServiceForm = ({ appointment, children }: AppointmentFormProps) => 
       return
     }
 
-    toast.success(`Agendamento ${isEdit ? "atualizado" : "criado"} com sucesso!`)
+    toast.success(`Cadastro ${isEdit ? "atualizado" : "criado"} com sucesso!`)
 
     setIsOpen(false)
     form.reset()
   }
 
   useEffect(() => {
-    form.reset(appointment);
-  }, [appointment, form])
+    form.reset(service);
+  }, [service, form])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -126,91 +84,24 @@ export const ServiceForm = ({ appointment, children }: AppointmentFormProps) => 
             Cadastre um serviço
           </DialogTitle>
           <DialogDescription size="modal">
-            Preencha os dados do cliente para realizar o agendamento:
+            Preencha os dados do seu serviço para facilitar o agendamento:
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField control={form.control} name="tutorName"
+            <FormField control={form.control} name="serviceName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-label-medium-size text-content-primary">
-                    Nome do Tutor
+                    Nome do Serviço
                   </FormLabel>
                   <FormControl>
                     <div className='relative'>
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand" size={20} />
                       <Input
-                        placeholder="Nome do tutor"
+                        placeholder="Nome do serviço"
                         className="pl-10"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField control={form.control} name="petName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-label-medium-size text-content-primary">
-                    Nome do Pet
-                  </FormLabel>
-                  <FormControl>
-                    <div className='relative'>
-                      <Dog className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand" size={20} />
-                      <Input
-                        placeholder="Nome do pet"
-                        className="pl-10"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField control={form.control} name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-label-medium-size text-content-primary">
-                    Telefone
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Phone
-                        className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand"
-                        size={20}
-                      />
-                      <IMaskInput
-                        placeholder="(99) 99999-9999"
-                        mask="(00) 00000-0000"
-                        className="pl-10 flex h-12 w-full rounded-md border border-border-primary bg-background-tertiary px-3 py-2 text-sm text-content-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-content-secondary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-border-brand disabled:cursor-not-allowed disabled:opacity-50 hover:border-border-secondary focus:border-border-brand focus-visible:border-border-brand aria-invalid:ring-destructive/20 aria-invalid:border-destructive"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField control={form.control} name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-label-medium-size text-content-primary">
-                    Descrição do Serviço
-                  </FormLabel>
-                  <FormControl>
-                    <div className='relative'>
-
-                      <Textarea
-                        placeholder="Descrição do serviço"
-                        className="resize-none"
                         {...field}
                       />
                     </div>
@@ -221,72 +112,62 @@ export const ServiceForm = ({ appointment, children }: AppointmentFormProps) => 
             />
 
             <div className="space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
-              <FormField control={form.control} name="scheduleAt"
+              <FormField control={form.control} name="duration"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel className="text-label-medium-size text-content-primary">
-                      Data
+                      Duração
                     </FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button variant="outline"
-                            className={cn(
-                              'w-full justify-between text-left font-normal bg-background-tertiary border-border-primary text-content-primary hover:bg-background-tertiary hover:border-border-secondary hover:text-content-primary focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-border-brand focus:border-border-brand focus-visible:border-border-brand',
-                              !field.value && 'text-content-secondary'
-                            )}
-                          >
-                            <div className="flex items-center gap-2">
-                              <CalendarIcon className="text-content-brand" size={20} />
-                              {field.value ? (
-                                format(field.value, "dd/MM/yyyy")
-                              ) : (
-                                <span>Selecione uma data</span>
-                              )}
-                            </div>
-                            <ChevronDownIcon className="opacity-50 h-4 w-4" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode='single'
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < startOfToday()}
+                    <FormControl>
+                      <div className='relative'>
+                        <Timer
+                          className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand"
+                          size={20}
                         />
-                      </PopoverContent>
-                    </Popover>
-
+                        <IMaskInput
+                          placeholder="00:00"
+                          mask="HH:MM"
+                          className="pl-10 flex h-12 w-full rounded-md border border-border-primary bg-background-tertiary px-3 py-2 text-sm text-content-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-content-secondary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-border-brand disabled:cursor-not-allowed disabled:opacity-50 hover:border-border-secondary focus:border-border-brand focus-visible:border-border-brand aria-invalid:ring-destructive/20 aria-invalid:border-destructive"
+                          blocks={{
+                            HH: {
+                              mask: IMask.MaskedRange,
+                              from: 0,
+                              to: 23,
+                            },
+                            MM: {
+                              mask: IMask.MaskedRange,
+                              from: 0,
+                              to: 59,
+                            }
+                          }}
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField control={form.control} name="time"
+              <FormField control={form.control} name="price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-label-medium-size text-content-primary">
-                      Hora
+                      Preço
                     </FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-content-brand" />
-                          <SelectValue placeholder="--:-- --" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TIME_OPTION.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="relative">
+                        <DollarSign
+                          className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand"
+                          size={20}
+                        />
+                        <IMaskInput
+                          placeholder="R$ 000,00"
+                          mask="R$ 000,00"
+                          className="pl-10 flex h-12 w-full rounded-md border border-border-primary bg-background-tertiary px-3 py-2 text-sm text-content-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-content-secondary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-border-brand disabled:cursor-not-allowed disabled:opacity-50 hover:border-border-secondary focus:border-border-brand focus-visible:border-border-brand aria-invalid:ring-destructive/20 aria-invalid:border-destructive"
+                          {...field}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -294,37 +175,38 @@ export const ServiceForm = ({ appointment, children }: AppointmentFormProps) => 
               />
             </div>
 
+            <FormField control={form.control} name="observation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-label-medium-size text-content-primary">
+                    Observação (opcional)
+                  </FormLabel>
+                  <FormControl>
+                    <div className='relative'>
+
+                      <Textarea
+                        placeholder="Observação"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="flex justify-end">
               <Button type="submit" variant='brand' disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Agendar
+                Cadastrar
               </Button>
             </div>
-
           </form>
         </Form>
       </DialogContent>
     </Dialog >
   )
 }
-
-const generateTimeOptions = (): string[] => {
-  const times = []
-
-  for (let hour = 9; hour <= 21; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      if (hour === 21 && minute > 0) break;
-      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-      times.push(timeString)
-    }
-  }
-
-  return times;
-}
-
-const TIME_OPTION = generateTimeOptions().filter((time) => {
-  const hour = parseInt(time.split(':')[0])
-  return (hour >= 9 && hour <= 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour <= 21)
-})

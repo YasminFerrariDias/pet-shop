@@ -37,10 +37,10 @@ const appointmentFormSchema = z.object({
   const [hour, minute] = data.time.split(':')
   const hourNum = Number(hour)
 
-  const isValidHour = 
-    (hourNum >= 9 && hourNum <= 12) ||
-    (hourNum >= 13 && hourNum <= 18) ||
-    (hourNum >= 19 && hourNum <= 21)
+  const isValidHour =
+    (hourNum >= 9 && hourNum < 12) ||
+    (hourNum >= 13 && hourNum < 18) ||
+    (hourNum >= 19 && hourNum < 21)
 
   if (!isValidHour) return false
 
@@ -326,5 +326,5 @@ const generateTimeOptions = (): string[] => {
 
 const TIME_OPTION = generateTimeOptions().filter((time) => {
   const hour = parseInt(time.split(':')[0])
-  return (hour >= 9 && hour <= 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour <= 21)
+  return (hour >= 9 && hour < 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour < 21)
 })
