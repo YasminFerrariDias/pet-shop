@@ -48,8 +48,8 @@ export default async function Home({
 
   return (
     <div className="bg-background-primary p-6">
-      <div className="">
-        <div className="flex items-center justify-between mb-8 gap-4">
+      <div className="flex items-center justify-between mb-8 gap-4">
+        <div>
           <h1 className="text-title-size text-content-primary mb-2">
             Sua Agenda
           </h1>
