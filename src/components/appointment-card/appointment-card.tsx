@@ -9,13 +9,15 @@ import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "l
 import { useState } from "react"
 import { deleteAppointment } from "@/app/actions-appointment"
 import { toast } from "sonner"
+import { Service } from "@/types/service"
 
 type AppointmentCard = {
   appointment: Appointment
   isFirstInSection?: boolean
+  allServices: Service[]
 }
 
-export const AppointmentCard = ({ appointment, isFirstInSection = false }: AppointmentCard) => {
+export const AppointmentCard = ({ appointment, isFirstInSection = false, allServices }: AppointmentCard) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -58,7 +60,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false }: Appoi
       </div>
       <div className="text-left pr-4 hidden md:block mt-1 md:mt-0 col-span-2 md:col-span-1">
         <span className="text-paragraph-small-size text-content-secondary">
-
+          {appointment.servicesIds}
         </span>
       </div>
 

@@ -69,7 +69,7 @@ export default async function Home({
       <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">
         <div className="flex-1">
           {periods.map((period) => (
-            <PeriodSection period={period} key={period.type} />
+            <PeriodSection period={period} key={period.type} allServices={services} />
           ))}
         </div>
 
@@ -85,7 +85,7 @@ export default async function Home({
           </Button>
         </ServiceForm>
 
-        <AppointmentForm>
+        <AppointmentForm allServices={formattedServices}>
           <Button variant="brand">
             Novo Agendamento
           </Button>

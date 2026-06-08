@@ -19,12 +19,13 @@ import { toast } from "sonner";
 import { createAppointment, updateAppointment } from "@/app/actions-appointment";
 import { useEffect, useState } from "react";
 import { Appointment } from "@/types/appointment";
+import { Service } from "@/types/service";
 
 const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
   petName: z.string().min(3, "O nome do pet é obrigatório"),
   phone: z.string().min(11, "O telefone é obrigatório"),
-
+  servicesIds: z.array(z.string()),
   scheduleAt: z.date({
     error: 'A data é obrigatória'
   }).min(startOfToday(), {
@@ -60,9 +61,10 @@ type AppointFormValues = z.infer<typeof appointmentFormSchema>;
 type AppointmentFormProps = {
   appointment?: Appointment;
   children?: React.ReactNode;
+  allServices?: Service[];
 }
 
-export const AppointmentForm = ({ appointment, children }: AppointmentFormProps) => {
+export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<AppointFormValues>({
@@ -71,7 +73,7 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
       tutorName: '',
       petName: '',
       phone: '',
-
+      servicesIds: [],
       scheduleAt: undefined,
       time: ''
     }
@@ -199,8 +201,7 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
               )}
             />
 
-// MUDAR
-            <FormField control={form.control} name="description"
+            <FormField control={form.control} name="servicesIds"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-label-medium-size text-content-primary">
@@ -208,12 +209,14 @@ export const AppointmentForm = ({ appointment, children }: AppointmentFormProps)
                   </FormLabel>
                   <FormControl>
                     <div className='relative'>
-
-                      <Textarea
-                        placeholder="Descrição do serviço"
-                        className="resize-none"
-                        {...field}
-                      />
+                      {allServices?.map((service) => (
+                        <span
+                          key={service.id}
+                          className="bg-accent-primary-light m-2"
+                        >
+                          {service.serviceName}
+                        </span>
+                      ))}
                     </div>
                   </FormControl>
                   <FormMessage />

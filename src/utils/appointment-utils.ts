@@ -23,8 +23,7 @@ export function groupAppointmentByPeriod(
     return {
       ...apt,
       time: formatDateTime(apt.scheduleAt),
-      // MUDAR
-      description: apt.description,
+      servicesIds: apt.servicesIds,
       period,
     };
   }).filter((item): item is Appointment => item !== null);
@@ -62,9 +61,9 @@ export function groupAppointmentByPeriod(
 }
 
 export function calculatePeriod(hour: number) {
-  const isMorning = hour >= 9 && hour <= 12;
-  const isAfternoon = hour >= 13 && hour <= 18;
-  const isEvening = hour >= 19 && hour <= 21;
+  const isMorning = hour >= 9 && hour < 12;
+  const isAfternoon = hour >= 13 && hour < 18;
+  const isEvening = hour >= 19 && hour < 21;
 
   return {
     isMorning,
