@@ -11,9 +11,8 @@ DROP TABLE "Service";
 CREATE TABLE "services" (
     "id" TEXT NOT NULL,
     "serviceName" TEXT NOT NULL,
-    "duration" INTEGER NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
-    "observation" TEXT,
+    "duration" TEXT NOT NULL,
+    "price" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updateAt" TIMESTAMP(3) NOT NULL,
 

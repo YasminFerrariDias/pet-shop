@@ -3,5 +3,4 @@ export type Service = {
   serviceName: string;
   duration: string;
   price: string;
-  observation: string;
 };

@@ -8,7 +8,6 @@ const serviceSchema = z.object({
   serviceName: z.string(),
   duration: z.string(),
   price: z.string(),
-  observation: z.string(),
 });
 
 type ServiceData = z.infer<typeof serviceSchema>;
@@ -50,9 +49,8 @@ export async function createService(data: ServiceData) {
     await prisma?.service.create({
       data: {
         serviceName: parsedData.serviceName,
-        duration: parseInt(parsedData.duration) || 0,
-        price: parseFloat(parsedData.price.replace('R$ ', '').replace(',', '.')),
-        observation: parsedData.observation,
+        duration: parsedData.duration,
+        price: parsedData.price,
       },
     });
 
@@ -87,9 +85,8 @@ export async function updateService(id: string, data: ServiceData) {
       where: { id },
       data: {
         serviceName: parsedData.serviceName,
-        duration: parseInt(parsedData.duration) || 0,
-        price: parseFloat(parsedData.price.replace('R$ ', '').replace(',', '.')),
-        observation: parsedData.observation,
+        duration: parsedData.duration,
+        price: parsedData.price,
       },
     });
 

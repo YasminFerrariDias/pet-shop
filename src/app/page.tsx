@@ -41,7 +41,6 @@ export default async function Home({
     ...service,
     duration: service.duration.toString(),
     price: service.price.toString(),
-    observation: service.observation ?? ''
   }))
 
   const periods = groupAppointmentByPeriod(appointments)

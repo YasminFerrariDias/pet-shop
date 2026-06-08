@@ -21,7 +21,6 @@ const serviceFormSchema = z.object({
     message: "Formato inválido. Use HH:mm (ex: 14:30)"
   }),
   price: z.string().min(1, "O preço do serviço é obrigatório"),
-  observation: z.string().min(0, "A descrição é opcional"),
 })
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -40,7 +39,6 @@ export const ServiceForm = ({ service, children }: ServiceFormProps) => {
       serviceName: '',
       duration: '',
       price: '',
-      observation: '',
     }
   })
 
@@ -172,27 +170,6 @@ export const ServiceForm = ({ service, children }: ServiceFormProps) => {
                 )}
               />
             </div>
-
-            <FormField control={form.control} name="observation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-label-medium-size text-content-primary">
-                    Observação (opcional)
-                  </FormLabel>
-                  <FormControl>
-                    <div className='relative'>
-
-                      <Textarea
-                        placeholder="Observação"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end">
               <Button type="submit" variant='brand' disabled={form.formState.isSubmitting}>
