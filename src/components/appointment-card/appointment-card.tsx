@@ -60,7 +60,10 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
       </div>
       <div className="text-left pr-4 hidden md:block mt-1 md:mt-0 col-span-2 md:col-span-1">
         <span className="text-paragraph-small-size text-content-secondary">
-          {appointment.servicesIds}
+          {appointment.servicesIds.map(id => {
+            const service = allServices.find(s => s.id === id)
+            return service?.serviceName
+          }).join(', ')}
         </span>
       </div>
 
