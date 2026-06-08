@@ -73,7 +73,7 @@ export default async function Home({
           ))}
         </div>
 
-        <div className="md:w-90 shrink-0">
+        <div className="md:w-90 shrink-0 mb-20">
           <ServiceSection services={formattedServices} />
         </div>
       </div>
