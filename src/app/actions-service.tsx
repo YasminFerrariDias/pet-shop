@@ -97,8 +97,8 @@ export async function updateService(id: string, data: ServiceData) {
 
     return { success: true };
   } catch (error) {
-    console.error('Erro ao atualizar o agendamento: ', error);
-    return { error: 'Erro ao atualizar o agendamento' };
+    console.error('Erro ao atualizar o serviço: ', error);
+    return { error: 'Erro ao atualizar o serviço' };
   }
 }
 

@@ -4,6 +4,7 @@ import { AppointmentForm } from "@/components/appointment-form/appointment-form"
 import { DatePicker } from "@/components/date-picker";
 import { PeriodSection } from "@/components/period-section";
 import { ServiceForm } from "@/components/service-form/service-form";
+import { ServiceSection } from "@/components/service-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 import { groupAppointmentByPeriod } from "@/utils";
@@ -30,12 +31,25 @@ export default async function Home({
     }
   });
 
+  const services = await prisma.service.findMany({
+    orderBy: {
+      serviceName: 'asc'
+    }
+  })
+
+  const formattedServices = services.map(service => ({
+    ...service,
+    duration: service.duration.toString(),
+    price: service.price.toString(),
+    observation: service.observation ?? ''
+  }))
+
   const periods = groupAppointmentByPeriod(appointments)
 
   return (
     <div className="bg-background-primary p-6">
-      <div className="flex items-center justify-between mb-8 gap-4">
-        <div>
+      <div className="">
+        <div className="flex items-center justify-between mb-8 gap-4">
           <h1 className="text-title-size text-content-primary mb-2">
             Sua Agenda
           </h1>
@@ -53,10 +67,16 @@ export default async function Home({
         <DatePicker />
       </div>
 
-      <div className="pb-24 md:pb-0">
-        {periods.map((period) => (
-          <PeriodSection period={period} key={period.type} />
-        ))}
+      <div className="flex flex-col md:flex-row gap-5">
+        <div className="w-full md:w-550">
+          {periods.map((period) => (
+            <PeriodSection period={period} key={period.type} />
+          ))}
+        </div>
+
+        <div className="pb-24 md:pb-0 md:w-450">
+          <ServiceSection services={formattedServices} />
+        </div>
       </div>
 
       <div className="fixed gap-2 flex-row bottom-0 left-0 right-0 flex justify-center bg-[#232420] py-4.5 px-6 
@@ -73,6 +93,6 @@ export default async function Home({
           </Button>
         </AppointmentForm>
       </div>
-    </div >
+    </div>
   );
 }
