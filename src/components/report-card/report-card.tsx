@@ -1,78 +1,66 @@
 'use client'
 
 import { cn } from "@/lib/utils"
-import { Appointment } from "@/types/appointment"
-import { AppointmentForm } from "../appointment-form/appointment-form"
+import { Service } from "@/types/service"
+import { ServiceForm } from "../service-form/service-form"
 import { Button } from "../ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "lucide-react"
 import { useState } from "react"
-import { deleteAppointment } from "@/app/actions-appointment"
+import { deleteService } from "@/app/actions-service"
 import { toast } from "sonner"
-import { Service } from "@/types/service"
 
-type AppointmentCard = {
-  appointment: Appointment
+type ServiceCard = {
+  service: Service
   isFirstInSection?: boolean
-  allServices: Service[]
 }
 
-export const AppointmentCard = ({ appointment, isFirstInSection = false, allServices }: AppointmentCard) => {
+export const ReportCard = ({ service, isFirstInSection = false }: ServiceCard) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
     setIsDeleting(true)
 
-    const result = await deleteAppointment(appointment.id)
+    const result = await deleteService(service.id)
 
     if (result?.error) {
       toast.error(result.error)
+      setIsDeleting(false)
       return
     }
 
-    toast.success('Agendamento removido com sucesso!')
+    toast.success('Serviço removido com sucesso!')
     setIsDeleting(false)
   }
 
+  /// ADICIONANDO O REDUCE
+
   return (
     <div
-      className={cn("grid grid-cols-2 md:grid-cols-[15%_35%_30%_20%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
+      className={cn("grid grid-cols-4 md:grid-cols-[42%_10%_48%_5%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
     >
-      <div className="text-left pr-4 md:pr-0">
-        <span className="text-label-small-size text-content-primary font-semibold">
-          {appointment.time}
+      <div className="text-left flex-1 mr-2">
+        <span className="text-label-small-size text-content-primary font-semibold block truncate">
+          {service?.serviceName}
         </span>
       </div>
 
-      <div className="text-right md:text-left md:pr-4">
-        <div className="flex items-center justify-end md:justify-start gap-1">
-          <span className="text-label-small-size text-content-primary font-semibold">
-            {appointment.petName}
-          </span>
-          <span className="text-paragraph-small-size text-content-secondary">
-            /
-          </span>
-          <span className="text-paragraph-small-size text-content-secondary">
-            {appointment.tutorName}
-          </span>
-        </div>
+      <div className="flex gap-2">
+        <span className="text-label-small-size text-content-primary font-semibold">
+          {service.serviceName.length}
+        </span>
 
-      </div>
-      <div className="text-left pr-4 hidden md:block mt-1 md:mt-0 col-span-2 md:col-span-1">
-        <span className="text-paragraph-small-size text-content-secondary">
-          {appointment.servicesIds.map(id => {
-            const service = allServices.find(s => s.id === id)
-            return service?.serviceName
-          }).join(', ')}
+        <span className="text-paragraph-small-size text-content-secondary whitespace-nowrap">
+          ///////////{service?.price}
         </span>
       </div>
 
       <div className="text-right mt-2 md:mt-0 col-span-2 md:col-span-1 flex justify-end items-center gap-2">
-        <AppointmentForm appointment={appointment} allServices={allServices}>
+        <ServiceForm service={service}>
           <Button variant="edit" size="icon">
             <EditIcon size={16} />
           </Button>
-        </AppointmentForm>
+        </ServiceForm>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -88,7 +76,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
               </AlertDialogTitle>
 
               <AlertDialogDescription>
-                Tem certeza que deseja remover esse agendamento? Essa ação não pode ser desfeita.
+                Tem certeza que deseja remover esse serviço? Essa ação não pode ser desfeita.
               </AlertDialogDescription>
 
               <AlertDialogFooter>
@@ -107,6 +95,6 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
           </AlertDialogContent>
         </AlertDialog>
       </div>
-    </div >
+    </div>
   )
 }

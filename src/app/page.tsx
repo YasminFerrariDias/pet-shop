@@ -3,6 +3,7 @@
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
 import { DatePicker } from "@/components/date-picker";
 import { PeriodSection } from "@/components/period-section";
+import { ReportSection } from "@/components/report-section";
 import { ServiceForm } from "@/components/service-form/service-form";
 import { ServiceSection } from "@/components/service-section";
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,7 @@ export default async function Home({
 
         <div className="md:w-90 shrink-0 mb-20">
           <ServiceSection services={formattedServices} />
+          <ReportSection services={formattedServices} />
         </div>
       </div>
 
