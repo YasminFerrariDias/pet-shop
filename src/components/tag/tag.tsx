@@ -13,10 +13,10 @@ export const Tag = ({ children, isSelect = false, onClick }: TagProps) => {
       className={`
         p-2 rounded-full text-label-medium-size flex
         items-center transition-colors gap-1
-        ${isSelect ? "bg-accent-primary" : "bg-accent-primary-light"}`
+        ${isSelect ? "bg-accent-primary-light" : "bg-accent-primary"}`
       }
     >
-      {isSelect ? <Plus size={17} /> : <Minus size={17} />}
+      {isSelect ? <Minus size={17} /> : <Plus size={17} />}
       {children}
     </button>
   )

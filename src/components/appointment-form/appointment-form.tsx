@@ -8,7 +8,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form'
 import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { IMaskInput } from "react-imask";
 import { startOfToday, format, setMinutes, setHours } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -19,8 +18,8 @@ import { toast } from "sonner";
 import { createAppointment, updateAppointment } from "@/app/actions-appointment";
 import { useEffect, useState } from "react";
 import { Appointment } from "@/types/appointment";
+import { TagSelector } from "../tag-selector";
 import { Service } from "@/types/service";
-import { Tag } from "../tag";
 
 const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
@@ -209,17 +208,11 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                     Serviços
                   </FormLabel>
                   <FormControl>
-                    <div className='relative flex gap-3'>
-                      {allServices?.map((service) => (
-                        <Tag
-                          key={service.id}
-                          isSelect
-
-                        >
-                          {service.serviceName}
-                        </Tag>
-                      ))}
-                    </div>
+                    <TagSelector
+                      allServices={allServices}
+                      selectIds={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
