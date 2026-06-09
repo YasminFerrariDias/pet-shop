@@ -41,7 +41,7 @@ export default async function Home({
 
   const formattedServices = services.map(service => ({
     ...service,
-    duration: service.duration.toString(),
+    duration: service.duration,
     price: service.price.toString(),
   }))
 
@@ -57,7 +57,7 @@ export default async function Home({
       serviceName: service.serviceName,
       price: service.price,
       duration: service.duration,
-      amount: appointments.filter(apt => apt.servicesIds?.includes(service.id)).length,
+      amount: amount,
       totalRevenue: numericalPrice * amount
     }
   })

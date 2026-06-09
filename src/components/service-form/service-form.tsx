@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form'
 import { DollarSign, Loader2, Timer, User } from "lucide-react";
 import { Input } from "../ui/input";
-import { IMask, IMaskInput } from "react-imask";
+import { IMaskInput } from "react-imask";
 import { toast } from "sonner";
 import { createService, updateService } from "@/app/actions-service";
 import { useEffect, useState } from "react";
@@ -16,13 +16,15 @@ import { Service } from "@/types/service";
 
 const serviceFormSchema = z.object({
   serviceName: z.string().min(3, "O nome do serviço é obrigatório"),
-  duration: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
-    message: "Formato inválido. Use HH:mm (ex: 14:30)"
-  }),
+  duration: z.number()
+    .min(1, "A duração deve ser maior que 0")
+    .max(480, "A duração não pode exceder de 8 horas"),
   price: z.string().min(1, "O preço do serviço é obrigatório"),
 })
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
+
+type ServiceFormInput = z.input<typeof serviceFormSchema>;
 
 type ServiceFormProps = {
   service?: Service;
@@ -36,7 +38,7 @@ export const ServiceForm = ({ service, children }: ServiceFormProps) => {
     resolver: zodResolver(serviceFormSchema),
     defaultValues: {
       serviceName: '',
-      duration: '',
+      duration: undefined,
       price: '',
     }
   })
@@ -109,31 +111,27 @@ export const ServiceForm = ({ service, children }: ServiceFormProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-label-medium-size text-content-primary">
-                      Duração
+                      Duração (em minutos)
                     </FormLabel>
                     <FormControl>
                       <div className='relative'>
-                        <Timer
-                          className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand"
-                          size={20}
-                        />
-                        <IMaskInput
-                          placeholder="00:00"
-                          mask="HH:MM"
-                          className="pl-10 flex h-12 w-full rounded-md border border-border-primary bg-background-tertiary px-3 py-2 text-sm text-content-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-content-secondary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-border-brand disabled:cursor-not-allowed disabled:opacity-50 hover:border-border-secondary focus:border-border-brand focus-visible:border-border-brand aria-invalid:ring-destructive/20 aria-invalid:border-destructive"
-                          blocks={{
-                            HH: {
-                              mask: IMask.MaskedRange,
-                              from: 0,
-                              to: 23,
-                            },
-                            MM: {
-                              mask: IMask.MaskedRange,
-                              from: 0,
-                              to: 59,
+                        <Timer className="absolute left-3 top-1/2 -translate-y-1/2 transform text-content-brand" size={20} />
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Duração em minutos"
+                          className="pl-10 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => {
+                            const value = e.target.valueAsNumber;
+                            field.onChange(isNaN(value) ? undefined : value)
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
+                              e.preventDefault();
                             }
                           }}
-                          {...field}
                         />
                       </div>
                     </FormControl>

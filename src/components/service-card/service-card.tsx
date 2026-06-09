@@ -1,7 +1,6 @@
 'use client'
 
 import { cn } from "@/lib/utils"
-import { Service } from "@/types/service"
 import { ServiceForm } from "../service-form/service-form"
 import { Button } from "../ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
@@ -9,10 +8,11 @@ import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "l
 import { useState } from "react"
 import { deleteService } from "@/app/actions-service"
 import { toast } from "sonner"
-import { ReportItem } from "@/types/report"
+import { Service } from "@/types/service"
+import { formatDuration } from "@/utils"
 
 type ServiceCardProps = {
-  service: ReportItem
+  service: Service
   isFirstInSection?: boolean
 }
 
@@ -46,7 +46,7 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
 
       <div className="flex gap-2">
         <span className="text-label-small-size text-content-primary font-semibold">
-          {service?.duration}
+          {formatDuration(service?.duration)}
         </span>
 
         <span className="text-paragraph-small-size text-content-secondary whitespace-nowrap">

@@ -27,7 +27,7 @@ model Appointment {
 model Service {
   id          String   @id @default(cuid())
   serviceName String
-  duration    String
+  duration    Int
   price       String
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt

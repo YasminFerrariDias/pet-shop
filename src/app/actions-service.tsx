@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 
 const serviceSchema = z.object({
   serviceName: z.string(),
-  duration: z.string(),
+  duration: z.number(),
   price: z.string(),
 });
 
@@ -58,7 +58,9 @@ export async function createService(data: ServiceData) {
     return { success: true };
   } catch (error) {
     console.error('Erro ao criar cadastro: ', error);
-    return { error: 'Erro ao criar o cadastro' };
+    return {
+      error: error instanceof Error ? error.message : String(error)
+    };
   }
 }
 
@@ -95,7 +97,9 @@ export async function updateService(id: string, data: ServiceData) {
     return { success: true };
   } catch (error) {
     console.error('Erro ao atualizar o serviço: ', error);
-    return { error: 'Erro ao atualizar o serviço' };
+    return {
+      error: error instanceof Error ? error.message : String(error)
+    };
   }
 }
 
