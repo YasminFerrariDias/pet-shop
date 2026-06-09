@@ -1,11 +1,11 @@
-import { Service } from "@/types/service";
 import { ReportCard } from "../report-card";
+import { ReportItem } from "@/types/report";
 
-type ServiceSectionProps = {
-  services: Service[];
+type ReportSectionProps = {
+  report: ReportItem[];
 }
 
-export const ReportSection = ({ services }: ServiceSectionProps) => {
+export const ReportSection = ({ report }: ReportSectionProps) => {
   return (
     <section className="mb-8 bg-background-tertiary rounded-xl">
       <div className="flex items-center px-5 py-3 justify-between border-b border-[#2E2C30]">
@@ -15,15 +15,15 @@ export const ReportSection = ({ services }: ServiceSectionProps) => {
           </h2>
         </div>
         <span className="text-label-large-size text-content-secondary">
-          {services.length}
+          {report.length}
         </span>
       </div>
 
-      {services.length > 0 ? (
+      {report.length > 0 ? (
         <div className="px-5">
           <div>
-            {services.map((service, index) => (
-              <ReportCard key={service.id} isFirstInSection={index === 0} service={service} />
+            {report.map((service, index) => (
+              <ReportCard key={service.id} isFirstInSection={index === 0} reportItem={service} />
             ))}
 
           </div>

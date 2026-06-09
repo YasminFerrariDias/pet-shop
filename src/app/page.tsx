@@ -8,6 +8,7 @@ import { ServiceForm } from "@/components/service-form/service-form";
 import { ServiceSection } from "@/components/service-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
+import { ReportItem } from "@/types/report";
 import { groupAppointmentByPeriod } from "@/utils";
 import { endOfDay, isValid, parseISO, startOfDay } from "date-fns";
 
@@ -44,6 +45,23 @@ export default async function Home({
     price: service.price.toString(),
   }))
 
+  const servicesWithReport: ReportItem[] = formattedServices.map(service => {
+    const amount = appointments.filter(apt =>
+      apt.servicesIds?.includes(service.id)
+    ).length
+
+    const numericalPrice = Number(service.price.replace('R$ ', '').replace(',', '.'))
+
+    return {
+      id: service.id,
+      serviceName: service.serviceName,
+      price: service.price,
+      duration: service.duration,
+      amount: appointments.filter(apt => apt.servicesIds?.includes(service.id)).length,
+      totalRevenue: numericalPrice * amount
+    }
+  })
+
   const periods = groupAppointmentByPeriod(appointments)
 
   return (
@@ -76,7 +94,7 @@ export default async function Home({
 
         <div className="md:w-90 shrink-0 mb-20">
           <ServiceSection services={formattedServices} />
-          <ReportSection services={formattedServices} />
+          <ReportSection report={servicesWithReport} />
         </div>
       </div>
 
@@ -88,7 +106,14 @@ export default async function Home({
         </ServiceForm>
 
         <AppointmentForm allServices={formattedServices}>
-          <Button variant="brand">
+          <Button
+            variant="brand"
+            disabled={services.length === 0}
+            title={services.length === 0
+              ? "Cadastre um serviço primeiro" : ""
+            }
+            className={services.length === 0 ? `opacity-50 cursor-not-allowed` : ''}
+          >
             Novo Agendamento
           </Button>
         </AppointmentForm>

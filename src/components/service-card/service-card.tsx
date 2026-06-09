@@ -9,13 +9,14 @@ import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "l
 import { useState } from "react"
 import { deleteService } from "@/app/actions-service"
 import { toast } from "sonner"
+import { ReportItem } from "@/types/report"
 
-type ServiceCard = {
-  service: Service
+type ServiceCardProps = {
+  service: ReportItem
   isFirstInSection?: boolean
 }
 
-export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCard) => {
+export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
