@@ -62,6 +62,9 @@ importers:
       react:
         specifier: 19.1.0
         version: 19.1.0
+      react-currency-input-field:
+        specifier: ^4.0.5
+        version: 4.0.5(react@19.1.0)
       react-day-picker:
         specifier: ^10.0.1
         version: 10.0.1(@types/react@19.2.15)(react@19.1.0)
@@ -74,6 +77,9 @@ importers:
       react-imask:
         specifier: ^7.6.1
         version: 7.6.1(react@19.1.0)
+      react-number-format:
+        specifier: ^5.4.5
+        version: 5.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       shadcn:
         specifier: ^4.9.0
         version: 4.9.0(@types/node@20.19.41)(typescript@5.9.3)
@@ -3942,6 +3948,11 @@ packages:
   rc9@3.0.1:
     resolution: {integrity: sha512-gMDyleLWVE+i6Sgtc0QbbY6pEKqYs97NGi6isHQPqYlLemPoO8dxQ3uGi0f4NiP98c+jMW6cG1Kx9dDwfvqARQ==}
 
+  react-currency-input-field@4.0.5:
+    resolution: {integrity: sha512-OnWbs0iw/vpjajDEWzFKNAOXBSuynRjTE6nBfa3mSxZP4QABqCxFiCjLn7FNDR6b4BCTp82MWN08Y+HuS9lRqg==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   react-day-picker@10.0.1:
     resolution: {integrity: sha512-eNh6BlwcYInWaJtRv18mXQ06Ys/H6rdTZAnTaSdOYJuTpwP1JMCHNd1FDRadA+gbeinq+psdULN5Xnowy9mV8w==}
     engines: {node: '>=18'}
@@ -3971,6 +3982,12 @@ packages:
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  react-number-format@5.4.5:
+    resolution: {integrity: sha512-y8O2yHHj3w0aE9XO8d2BCcUOOdQTRSVq+WIuMlLVucAm5XNjJAy+BoOJiuQMldVYVOKTMyvVNfnbl2Oqp+YxGw==}
+    peerDependencies:
+      react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
@@ -8666,6 +8683,10 @@ snapshots:
       defu: 6.1.7
       destr: 2.0.5
 
+  react-currency-input-field@4.0.5(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
   react-day-picker@10.0.1(@types/react@19.2.15)(react@19.1.0):
     dependencies:
       '@date-fns/tz': 1.5.0
@@ -8690,6 +8711,11 @@ snapshots:
       react: 19.1.0
 
   react-is@16.13.1: {}
+
+  react-number-format@5.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.15)(react@19.1.0):
     dependencies:

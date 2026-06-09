@@ -42,7 +42,7 @@ export default async function Home({
   const formattedServices = services.map(service => ({
     ...service,
     duration: service.duration,
-    price: service.price.toString(),
+    price: service.price,
   }))
 
   const servicesWithReport: ReportItem[] = formattedServices.map(service => {
@@ -50,15 +50,13 @@ export default async function Home({
       apt.servicesIds?.includes(service.id)
     ).length
 
-    const numericalPrice = Number(service.price.replace('R$ ', '').replace(',', '.'))
-
     return {
       id: service.id,
       serviceName: service.serviceName,
       price: service.price,
       duration: service.duration,
       amount: amount,
-      totalRevenue: numericalPrice * amount
+      totalRevenue: service.price * amount
     }
   })
 

@@ -28,7 +28,7 @@ model Service {
   id          String   @id @default(cuid())
   serviceName String
   duration    Int
-  price       String
+  price       Int
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt
 

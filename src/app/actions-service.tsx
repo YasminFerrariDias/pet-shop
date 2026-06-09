@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 const serviceSchema = z.object({
   serviceName: z.string(),
   duration: z.number(),
-  price: z.string(),
+  price: z.number(),
 });
 
 type ServiceData = z.infer<typeof serviceSchema>;

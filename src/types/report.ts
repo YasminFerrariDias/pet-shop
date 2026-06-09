@@ -1,7 +1,7 @@
 export type ReportItem = {
   id: string;
   serviceName: string;
-  price: string;
+  price: number;
   duration: number;
   amount: number;
   totalRevenue: number;

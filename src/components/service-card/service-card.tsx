@@ -36,7 +36,7 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
 
   return (
     <div
-      className={cn("grid grid-cols-4 md:grid-cols-[42%_10%_48%_5%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
+      className={cn("grid grid-cols-4 md:grid-cols-[30%_35%_45%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
     >
       <div className="text-left flex-1 mr-2">
         <span className="text-label-small-size text-content-primary font-semibold block truncate">
@@ -50,7 +50,10 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
         </span>
 
         <span className="text-paragraph-small-size text-content-secondary whitespace-nowrap">
-          {service?.price}
+          {service.price.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          })}
         </span>
       </div>
 
