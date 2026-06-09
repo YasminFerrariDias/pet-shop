@@ -36,20 +36,25 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
 
   return (
     <div
-      className={cn("grid grid-cols-4 md:grid-cols-[30%_35%_45%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
+      className={cn(
+        "grid grid-cols-2 md:grid-cols-[35%_55%_10%] items-center py-3",
+        !isFirstInSection && "border-t border-border-divisor"
+      )}
     >
-      <div className="text-left flex-1 mr-2">
+      {/* Nome - ocupa coluna 1 em mobile */}
+      <div className="text-left flex-1 min-w-0 mr-2">
         <span className="text-label-small-size text-content-primary font-semibold block truncate">
           {service?.serviceName}
         </span>
       </div>
 
-      <div className="flex gap-2">
-        <span className="text-label-small-size text-content-primary font-semibold">
+      {/* Duração + Preço - ocupam coluna 2 em mobile */}
+      <div className="flex justify-end md:justify-start gap-2 min-w-0">
+        <span className="text-label-small-size text-content-primary font-semibold whitespace-nowrap">
           {formatDuration(service?.duration)}
         </span>
 
-        <span className="text-paragraph-small-size text-content-secondary whitespace-nowrap">
+        <span className="text-paragraph-small-size text-content-secondary whitespace-nowrap truncate min-w-0">
           {service.price.toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
@@ -57,7 +62,8 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
         </span>
       </div>
 
-      <div className="text-right mt-2 md:mt-0 col-span-2 md:col-span-1 flex justify-end items-center gap-2">
+      {/* Botões - ocupam linha inteira em mobile */}
+      <div className="col-span-2 md:col-span-1 flex justify-end items-center gap-2 mt-2 md:mt-0">
         <ServiceForm service={service}>
           <Button variant="edit" size="icon">
             <EditIcon size={16} />
