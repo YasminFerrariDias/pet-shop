@@ -41,14 +41,13 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
         !isFirstInSection && "border-t border-border-divisor"
       )}
     >
-      {/* Nome - ocupa coluna 1 em mobile */}
+
       <div className="text-left flex-1 min-w-0 mr-2">
         <span className="text-label-small-size text-content-primary font-semibold block truncate">
           {service?.serviceName}
         </span>
       </div>
 
-      {/* Duração + Preço - ocupam coluna 2 em mobile */}
       <div className="flex justify-end md:justify-start gap-2 min-w-0">
         <span className="text-label-small-size text-content-primary font-semibold whitespace-nowrap">
           {formatDuration(service?.duration)}
@@ -62,7 +61,6 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
         </span>
       </div>
 
-      {/* Botões - ocupam linha inteira em mobile */}
       <div className="col-span-2 md:col-span-1 flex justify-end items-center gap-2 mt-2 md:mt-0">
         <ServiceForm service={service}>
           <Button variant="edit" size="icon">

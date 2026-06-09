@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 const serviceSchema = z.object({
   serviceName: z.string(),
   duration: z.number(),
-  price: z.number(),
+  price: z.number().min(0),
 });
 
 type ServiceData = z.infer<typeof serviceSchema>;
@@ -25,7 +25,7 @@ export async function serviceExist(id: string) {
 export async function existenceQuery(serviceName: string) {
   const existingService = await prisma?.service.findFirst({
     where: {
-      serviceName
+      serviceName,
     },
   });
 
@@ -59,7 +59,7 @@ export async function createService(data: ServiceData) {
   } catch (error) {
     console.error('Erro ao criar cadastro: ', error);
     return {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
@@ -98,11 +98,10 @@ export async function updateService(id: string, data: ServiceData) {
   } catch (error) {
     console.error('Erro ao atualizar o serviço: ', error);
     return {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
-
 
 export async function deleteService(id: string) {
   try {
