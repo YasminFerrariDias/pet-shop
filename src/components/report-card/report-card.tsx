@@ -11,7 +11,10 @@ type ServiceCard = {
 export const ReportCard = ({ reportItem, isFirstInSection = false }: ServiceCard) => {
   return (
     <div
-      className={cn("grid grid-cols-4 md:grid-cols-[42%_10%_48%_5%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
+      className={cn
+        (`grid justify-between grid-cols-[70%_30%] items-center py-3 md:grid-cols-[70%_30%]`,
+          !isFirstInSection && "border-t border-border-divisor"
+        )}
     >
       <div className="text-left flex-1 mr-2">
         <span className="text-label-small-size text-content-primary font-semibold block truncate">
@@ -19,13 +22,16 @@ export const ReportCard = ({ reportItem, isFirstInSection = false }: ServiceCard
         </span>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex justify-between">
         <span className="text-label-small-size text-content-primary font-semibold">
-          {reportItem.amount}
+          {reportItem?.amount}
         </span>
 
         <span className="text-paragraph-small-size text-content-secondary whitespace-nowrap">
-          {reportItem?.totalRevenue}
+          {reportItem.totalRevenue.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          })}
         </span>
       </div>
     </div>
