@@ -12,7 +12,8 @@ const localizer = dateFnsLocalizer({
   format,
   parse,
   startOfWeek: () => startOfWeek(new Date(), {
-    weekStartsOn: 0
+    weekStartsOn: 1,
+    locale: ptBR
   }),
   getDay,
   locales
@@ -51,6 +52,7 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, o
         endAccessor='end'
         defaultView='day'
         step={60}
+        culture='pt-BR'
         timeslots={1}
         min={minDate}
         max={maxDate}
