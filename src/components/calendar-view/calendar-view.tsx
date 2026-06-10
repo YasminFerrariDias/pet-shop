@@ -26,10 +26,12 @@ type Event = {
 }
 
 type CalendarViewProps = {
-  events: Event[]
+  events: Event[],
+  minHours: number
+  maxHours: number
 }
 
-export const CalendarView = ({ events }: CalendarViewProps) => {
+export const CalendarView = ({ events, minHours, maxHours }: CalendarViewProps) => {
   return (
     <div className='h-150'>
       <Calendar
@@ -38,6 +40,10 @@ export const CalendarView = ({ events }: CalendarViewProps) => {
         startAccessor='start'
         endAccessor='end'
         defaultView='day'
+        step={60}
+        timeslots={1}
+        min={new Date(new Date().setHours(minHours, 0, 0))}
+        max={new Date(new Date().setHours(maxHours, 0, 0))}
         views={['day', 'week', 'month', 'agenda']}
         messages={{
           today: 'Hoje',

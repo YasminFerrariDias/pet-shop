@@ -302,6 +302,10 @@
   background-color: rgba(146, 130, 250, 0.1);
 }
 
+.rbc-toolbar {
+  display: none;
+}
+
 /* Botões */
 .rbc-toolbar button {
   background-color: var(--color-background-secondary);

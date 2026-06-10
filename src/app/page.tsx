@@ -84,6 +84,21 @@ export default async function Home({
     end: apt.endTime,
   }))
 
+  const morningPeriod = events.filter(e => {
+    const hour = e.start.getHours()
+    return hour >= 9 && hour < 12
+  })
+
+  const afternoonPeriod = events.filter(e => {
+    const hour = e.start.getHours()
+    return hour >= 13 && hour < 18
+  })
+
+  const eveningPeriod = events.filter(e => {
+    const hour = e.start.getHours()
+    return hour >= 18 && hour < 21
+  })
+
   return (
     <div className="bg-background-primary p-6" >
       <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto">
@@ -101,7 +116,11 @@ export default async function Home({
         </div>
       </div>
 
-      <CalendarView events={events} />
+      <div>
+        <CalendarView events={morningPeriod} minHours={9} maxHours={12} />
+        <CalendarView events={afternoonPeriod} minHours={13} maxHours={18} />
+        <CalendarView events={eveningPeriod} minHours={19} maxHours={21} />
+      </div>
 
       {/*  <div className="mt-3 mb-8 md:hidden">
         <DatePicker />
