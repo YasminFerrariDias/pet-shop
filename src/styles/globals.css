@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 @theme {
   /* Content Colors */
@@ -255,4 +256,68 @@
 
 [data-sonner-toast][data-type='error'] [data-icon] {
   color: #ffffff !important;
+}
+
+/* Calendário - Cores personalizadas */
+.rbc-calendar {
+  background-color: var(--color-background-tertiary);
+  border-radius: 16px;
+}
+
+/* Cabeçalho */
+.rbc-header {
+  background-color: var(--color-background-secondary);
+  color: var(--color-content-primary);
+  border-bottom: 1px solid var(--color-border-divisor);
+}
+
+/* Horários na lateral */
+.rbc-label {
+  color: var(--color-content-secondary);
+}
+
+/* Eventos */
+.rbc-event {
+  background-color: var(--color-background-brand);
+  color: var(--color-content-primary);
+  border-radius: 8px;
+}
+
+.rbc-event:hover {
+  background-color: var(--color-accent-primary);
+}
+
+/* Grade de horários */
+.rbc-time-view,
+.rbc-time-content {
+  background-color: var(--color-background-tertiary);
+}
+
+.rbc-timeslot-group {
+  border-bottom: 1px solid var(--color-border-divisor);
+}
+
+/* Dia atual */
+.rbc-today {
+  background-color: rgba(146, 130, 250, 0.1);
+}
+
+/* Botões */
+.rbc-toolbar button {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-content-primary);
+}
+
+.rbc-toolbar button:hover {
+  background-color: var(--color-border-secondary);
+}
+
+.rbc-toolbar button.rbc-active {
+  background-color: var(--color-background-brand);
+  color: white;
+}
+
+.rbc-toolbar-label {
+  color: var(--color-content-primary);
 }

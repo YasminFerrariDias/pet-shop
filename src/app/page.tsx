@@ -1,6 +1,7 @@
 'use server'
 
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
+import { CalendarView } from "@/components/calendar-view";
 import { DatePicker } from "@/components/date-picker";
 import { PeriodSection } from "@/components/period-section";
 import { ReportSection } from "@/components/report-section";
@@ -10,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 import { ReportItem } from "@/types/report";
 import { groupAppointmentByPeriod } from "@/utils";
-import { endOfDay, isValid, parseISO, startOfDay } from "date-fns";
+import { addMinutes, endOfDay, isValid, parseISO, startOfDay } from "date-fns";
 
 export default async function Home({
   searchParams
@@ -45,6 +46,7 @@ export default async function Home({
     price: service.price,
   }))
 
+
   const servicesWithReport: ReportItem[] = formattedServices.map(service => {
     const amount = appointments.filter(apt =>
       apt.servicesIds?.includes(service.id)
@@ -62,8 +64,28 @@ export default async function Home({
 
   const periods = groupAppointmentByPeriod(appointments)
 
+  const appointmentsWithDuration = appointments.map((apt => {
+    const totalDuration = apt.servicesIds.reduce((total, id) => {
+      const service = services.find(s => s.id === id);
+      return total + (service?.duration || 0)
+    }, 0)
+
+    return {
+      ...apt,
+      totalDuration,
+      endTime: addMinutes(apt.scheduleAt, totalDuration)
+    }
+  }))
+
+  const events = appointmentsWithDuration.map(apt => ({
+    id: apt.id,
+    title: `${apt.petName} - ${apt.tutorName}`,
+    start: apt.scheduleAt,
+    end: apt.endTime,
+  }))
+
   return (
-    <div className="bg-background-primary p-6">
+    <div className="bg-background-primary p-6" >
       <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto">
         <div>
           <h1 className="text-title-size text-content-primary mb-2">
@@ -79,7 +101,9 @@ export default async function Home({
         </div>
       </div>
 
-      <div className="mt-3 mb-8 md:hidden">
+      <CalendarView events={events} />
+
+      {/*  <div className="mt-3 mb-8 md:hidden">
         <DatePicker />
       </div>
 
@@ -115,7 +139,7 @@ export default async function Home({
             Novo Agendamento
           </Button>
         </AppointmentForm>
-      </div>
-    </div>
+      </div>*/}
+    </div >
   );
 }
