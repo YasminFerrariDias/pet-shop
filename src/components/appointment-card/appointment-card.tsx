@@ -50,7 +50,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
     >
       <div className="text-left pr-4 md:pr-0">
         <span className="text-label-small-size text-content-primary font-semibold">
-          {appointment.time} - {format(endTime, 'HH:mm')}
+          {format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')}
         </span>
       </div>
 

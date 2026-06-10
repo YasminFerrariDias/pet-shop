@@ -118,7 +118,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
         phone: appointment.phone,
         servicesIds: appointment.servicesIds || [],
         scheduleAt: appointment.scheduleAt,
-        time: appointment.time || '',
+        time: format(appointment.scheduleAt, "HH:mm"),
       })
     } else {
       form.reset({

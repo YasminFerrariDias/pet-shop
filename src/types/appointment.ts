@@ -2,7 +2,6 @@ export type AppointmentPeriodDay = 'morning' | 'afternoon' | 'evening';
 
 export type Appointment = {
   id: string;
-  time: string;
   petName: string;
   tutorName: string;
   phone: string;

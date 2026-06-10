@@ -22,7 +22,6 @@ export function groupAppointmentByPeriod(
 
     return {
       ...apt,
-      time: formatDateTime(apt.scheduleAt),
       servicesIds: apt.servicesIds,
       period,
     };
