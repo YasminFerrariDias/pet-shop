@@ -1,11 +1,8 @@
 'use server'
 
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
-import { CalendarHeader } from "@/components/calendar-header/calendar-header";
 import { CalendarSection } from "@/components/calendar-section/calendar-section";
-import { CalendarEvent, CalendarView } from "@/components/calendar-view";
-import { DatePicker } from "@/components/date-picker";
-import { PeriodSection } from "@/components/period-section";
+import { CalendarEvent } from "@/components/calendar-view";
 import { ReportSection } from "@/components/report-section";
 import { ServiceForm } from "@/components/service-form/service-form";
 import { ServiceSection } from "@/components/service-section";
@@ -13,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 import { ReportItem } from "@/types/report";
 import { groupAppointmentByPeriod } from "@/utils";
-import { addMinutes, endOfDay, isValid, parseISO, startOfDay } from "date-fns";
+import { addMinutes, isValid, parseISO } from "date-fns";
 
 export default async function Home({
   searchParams
@@ -82,7 +79,7 @@ export default async function Home({
 
   return (
     <div className="bg-background-primary p-6" >
-      <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto">
+      <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto ml-auto">
         <div>
           <h1 className="text-title-size text-content-primary mb-2">
             Sua Agenda
@@ -91,15 +88,6 @@ export default async function Home({
             Aqui você pode ver todos os clientes e serviços agendados para hoje
           </p>
         </div>
-
-        <div className="hidden md:flex items-center gap-4">
-          <DatePicker />
-        </div>
-      </div>
-
-
-      <div className="mt-3 mb-8 md:hidden">
-        <DatePicker />
       </div>
 
       <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">

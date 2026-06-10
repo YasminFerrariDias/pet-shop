@@ -41,8 +41,8 @@ export const ReportSection = ({ report }: ReportSectionProps) => {
 
           <div className="px-5 grid justify-between grid-cols-[70%_30%] items-center py-3 md:grid-cols-[70%_30%]">
             <div className="text-left flex-1 mr-2">
-              <h2 className="text-title-size text-content-primary">
-                TOTAL
+              <h2 className="text-label-medium-size text-content-primary">
+                LUCRO
               </h2>
             </div>
 
