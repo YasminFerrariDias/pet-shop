@@ -10,6 +10,7 @@ import { useState } from "react"
 import { deleteAppointment } from "@/app/actions-appointment"
 import { toast } from "sonner"
 import { Service } from "@/types/service"
+import { format, addMinutes } from "date-fns"
 
 type AppointmentCard = {
   appointment: Appointment
@@ -34,13 +35,22 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
     setIsDeleting(false)
   }
 
+  const totalDuration = appointment.servicesIds.reduce((total, id) => {
+    const service = allServices.find(s => s.id === id)
+
+    return total + (service?.duration || 0);
+  }, 0)
+
+  const startTime = appointment.scheduleAt
+  const endTime = addMinutes(startTime, totalDuration)
+
   return (
     <div
       className={cn("grid grid-cols-2 md:grid-cols-[15%_35%_30%_20%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
     >
       <div className="text-left pr-4 md:pr-0">
         <span className="text-label-small-size text-content-primary font-semibold">
-          {appointment.time}
+          {appointment.time} - {format(endTime, 'HH:mm')}
         </span>
       </div>
 
@@ -61,7 +71,8 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
       <div className="text-left pr-4 hidden md:block mt-1 md:mt-0 col-span-2 md:col-span-1">
         <span className="text-paragraph-small-size text-content-secondary">
           {appointment.servicesIds.map(id => {
-            const service = allServices.find(s => s.id === id)
+            const service = allServices.find(s => s.id === id);
+
             return service?.serviceName
           }).join(', ')}
         </span>

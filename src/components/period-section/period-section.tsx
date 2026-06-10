@@ -33,7 +33,12 @@ export const PeriodSection = ({ period, allServices }: PeriodSectionProps) => {
         <div className="px-5">
           <div>
             {period.appointments.map((appointment, index) => (
-              <AppointmentCard key={appointment.id} appointment={appointment} isFirstInSection={index === 0} allServices={allServices} />
+              <AppointmentCard
+                key={appointment.id}
+                appointment={appointment}
+                isFirstInSection={index === 0}
+                allServices={allServices}
+              />
             ))}
 
           </div>
