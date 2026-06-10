@@ -9,13 +9,13 @@ import { useForm } from 'react-hook-form'
 import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
 import { Input } from "../ui/input";
 import { IMaskInput } from "react-imask";
-import { startOfToday, format, setMinutes, setHours } from "date-fns";
+import { startOfToday, format, setMinutes, setHours, addMinutes } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { toast } from "sonner";
-import { createAppointment, updateAppointment } from "@/app/actions-appointment";
+import { createAppointment, getAppointmentByDate, updateAppointment } from "@/app/actions-appointment";
 import { useEffect, useState } from "react";
 import { Appointment } from "@/types/appointment";
 import { TagSelector } from "../tag-selector";
@@ -66,6 +66,9 @@ type AppointmentFormProps = {
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [totalDuration, setTotalDuration] = useState(0)
+  const [dayAppointments, setDayAppointments] = useState<Appointment[]>([])
+  const [errorMessage, setErrorMessage] = useState('')
 
   const form = useForm<AppointFormValues>({
     resolver: zodResolver(appointmentFormSchema),
@@ -109,6 +112,36 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     setIsOpen(false)
     form.reset()
   }
+
+  const interval = 30
+  const requiredSlots = Math.ceil(totalDuration / interval)
+
+  const calculateEnd = (data: AppointFormValues, startTime: string, duration: number) => {
+    const [hour, minute] = data.time.split(':')
+
+    const scheduleAt = setMinutes( // etapa 2 - ajusta o minuto
+      setHours(data.scheduleAt, Number(hour)), // etapa 1 - ajusta a hora
+      Number(minute)
+    )
+
+    const referenceDate = new Date()
+    referenceDate.setHours(hour, minute, 0, 0)
+
+    const endTime = addMinutes(scheduleAt, totalDuration)
+
+    return format(endTime, 'HH:mm')
+  }
+
+  useEffect(() => {
+    const servicesIds = form.watch('servicesIds')
+
+    const total = servicesIds.reduce((sum, id) => {
+      const service = allServices?.find(s => s.id === id)
+      return sum + (service?.duration || 0)
+    }, 0)
+
+    setTotalDuration(total)
+  }, [form.watch('servicesIds'), allServices])
 
   useEffect(() => {
     if (appointment) {
@@ -270,7 +303,13 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         <Calendar
                           mode='single'
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={async (date) => {
+                            field.onChange(date)
+                            if (date) {
+                              const appointments = await getAppointmentByDate(date)
+                              setDayAppointments(appointments)
+                            }
+                          }}
                           disabled={(date) => date < startOfToday()}
                         />
                       </PopoverContent>
@@ -289,19 +328,36 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                     </FormLabel>
                     <FormControl>
                       <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
+                        onValueChange={(selectedTime) => {
+                          field.onChange(selectedTime)
+
+                          const endTime = calculateEnd(selectedTime, totalDuration)
+
+                          const erro = validateTimetable(selectedTime, endTime)
+
+                          if (erro) {
+                            setMessageErro(erro)
+                          } else {
+                            setMessageErro('')
+                          }
+                        }}
                       >
                         <SelectTrigger className="flex items-center gap-2">
                           <Clock className="h-4 w-4 text-content-brand" />
                           <SelectValue placeholder="--:-- --" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TIME_OPTION.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
+                          {TIME_OPTION.map((time) => {
+                            const isOccupied = dayAppointments.some((apt) => {
+                              return format(apt.scheduleAt, 'HH:mm') === time
+                            })
+
+                            return (
+                              <SelectItem key={time} value={time} disabled={isOccupied}>
+                                {time} {isOccupied && "(ocupado)"}
+                              </SelectItem>
+                            )
+                          })}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -309,6 +365,11 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                   </FormItem>
                 )}
               />
+              {totalDuration > 0 && (
+                <p className="text-sm text-content-secondary">
+                  Duração total: {Math.floor(totalDuration / 60)}h {totalDuration % 60}min
+                </p>
+              )}
             </div>
 
             <div className="flex justify-end">

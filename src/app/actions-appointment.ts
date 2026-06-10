@@ -3,7 +3,8 @@
 import z from 'zod';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { addMinutes, startOfMinute } from 'date-fns';
+import { addMinutes, endOfDay, startOfDay, startOfMinute } from 'date-fns';
+import { Appointment } from '@/types/appointment';
 
 const appointmentSchema = z.object({
   tutorName: z.string(),
@@ -152,4 +153,23 @@ export async function deleteAppointment(id: string) {
       error: 'Erro ao remover agendamento. Tente novamente',
     };
   }
+}
+
+export async function getAppointmentByDate(date: Date) {
+  const start = startOfDay(date);
+  const end = endOfDay(date);
+
+  const appointments = await prisma.appointment.findMany({
+    where: {
+      scheduleAt: {
+        gte: start,
+        lte: end,
+      },
+    },
+    orderBy: {
+      scheduleAt: 'asc',
+    },
+  });
+
+  return appointments;
 }
