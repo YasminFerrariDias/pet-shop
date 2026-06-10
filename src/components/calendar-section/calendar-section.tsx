@@ -18,9 +18,6 @@ export const CalendarSection = ({
 }: CalendarSectionProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [currentView, setCurrentView] = useState('day')
-  console.log('allAppointments recebidos:', allAppointments)
-  console.log('services recebidos:', services)
-  console.log('selectedDate:', selectedDate)
 
   const parsedAppointments = allAppointments.map((apt) => ({
     ...apt,
@@ -46,7 +43,7 @@ export const CalendarSection = ({
       id: apt.id,
       title: `${apt.petName} - ${apt.tutorName}`,
       start: apt.scheduleAt,
-      end: addMinutes(apt.scheduleAt, totalDuration),
+      end: addMinutes(apt.scheduleAt, Math.max(totalDuration, 30)),
     }
   })
 
@@ -82,7 +79,7 @@ export const CalendarSection = ({
 
   return (
     currentView === 'day' ? (
-      <div>
+      <div className='flex flex-col gap-2 h-fit'>
         <CalendarHeader selectedDate={selectedDate} onDateChange={setSelectedDate}
           onViewChange={setCurrentView} currentView={currentView} />
         <CalendarView events={morningEventsFiltered} minHours={9} maxHours={12} view={currentView} selectedDate={selectedDate} />
@@ -93,7 +90,13 @@ export const CalendarSection = ({
       <div>
         <CalendarHeader selectedDate={selectedDate} onDateChange={setSelectedDate}
           onViewChange={setCurrentView} currentView={currentView} />
-        <CalendarView events={allEvents} minHours={9} maxHours={21} view={currentView} selectedDate={selectedDate} />
+        <CalendarView
+          events={allEvents}
+          view={currentView}
+          selectedDate={selectedDate}
+          onViewChange={setCurrentView}
+          onDateChange={setSelectedDate}
+        />
       </div>
     )
   )

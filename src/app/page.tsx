@@ -97,19 +97,17 @@ export default async function Home({
         </div>
       </div>
 
-      <CalendarSection
-        allAppointments={appointments}
-        services={services}
-      />
-      {/*  <div className="mt-3 mb-8 md:hidden">
+
+      <div className="mt-3 mb-8 md:hidden">
         <DatePicker />
       </div>
 
       <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">
         <div className="flex-1">
-          {periods.map((period) => (
-            <PeriodSection period={period} key={period.type} allServices={services} />
-          ))}
+          <CalendarSection
+            allAppointments={appointments}
+            services={services}
+          />
         </div>
 
         <div className="md:w-90 shrink-0 mb-20">
@@ -137,7 +135,7 @@ export default async function Home({
             Novo Agendamento
           </Button>
         </AppointmentForm>
-      </div>*/}
-    </div >
+      </div>
+    </div>
   );
 }

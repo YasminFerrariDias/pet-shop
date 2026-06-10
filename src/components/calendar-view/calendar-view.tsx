@@ -26,22 +26,24 @@ export type CalendarEvent = {
 }
 
 type CalendarViewProps = {
-  events: CalendarEvent[],
-  minHours: number
-  maxHours: number
+  events: CalendarEvent[]
+  minHours?: number
+  maxHours?: number
   view?: string
   selectedDate: Date
+  onViewChange?: (view: string) => void
+  onDateChange?: (date: Date) => void
 }
 
-export const CalendarView = ({ events, minHours, maxHours, view, selectedDate }: CalendarViewProps) => {
-  const minDate = new Date(selectedDate)
-  minDate.setHours(minHours, 0, 0, 0)
+export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
+  const minDate = minHours !== undefined ? new Date(selectedDate) : undefined
+  if (minDate) minDate.setHours(minHours ?? 0, 0, 0)
 
-  const maxDate = new Date(selectedDate)
-  maxDate.setHours(maxHours, 0, 0, 0)
+  const maxDate = maxHours !== undefined ? new Date(selectedDate) : undefined
+  if (maxDate) maxDate.setHours(maxHours ?? 0, 0, 0)
 
   return (
-    <div className='h-fit'>
+    <div className='h-150'>
       <Calendar
         localizer={localizer}
         events={events}
@@ -54,6 +56,8 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate }:
         max={maxDate}
         date={selectedDate}
         views={['day', 'week', 'month', 'agenda']}
+        onView={(newView) => onViewChange?.(newView)}
+        onNavigate={(newDate) => onDateChange?.(newDate)}
         messages={{
           today: 'Hoje',
           previous: 'Anterior',
@@ -73,7 +77,6 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate }:
           },
         }}
         view={view as any}
-        onView={(newView) => console.log(newView)}
         className='bg-background-tertiary rounded-xl p-4'
       />
     </div>
