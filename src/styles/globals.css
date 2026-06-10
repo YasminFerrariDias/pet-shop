@@ -325,3 +325,38 @@
 .rbc-toolbar-label {
   color: var(--color-content-primary);
 }
+
+/* Botões do toolbar personalizado */
+.custom-toolbar {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-content-primary);
+}
+
+.custom-toolbar button {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-content-primary);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.custom-toolbar button:hover {
+  background-color: var(--color-border-secondary);
+}
+
+.custom-toolbar button:active {
+  background-color: var(--color-background-brand);
+  color: white;
+}
+
+.custom-toolbar-label {
+  color: var(--color-content-primary);
+  font-weight: bold;
+}
+
+.custom-toolbar button.active {
+  background-color: var(--color-background-brand);
+  color: white;
+}

@@ -1,7 +1,9 @@
 'use server'
 
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
-import { CalendarView } from "@/components/calendar-view";
+import { CalendarHeader } from "@/components/calendar-header/calendar-header";
+import { CalendarSection } from "@/components/calendar-section/calendar-section";
+import { CalendarEvent, CalendarView } from "@/components/calendar-view";
 import { DatePicker } from "@/components/date-picker";
 import { PeriodSection } from "@/components/period-section";
 import { ReportSection } from "@/components/report-section";
@@ -23,12 +25,6 @@ export default async function Home({
   const selectedDate = isValid(parsedDate) ? parsedDate : new Date()
 
   const appointments = await prisma.appointment.findMany({
-    where: {
-      scheduleAt: {
-        gte: startOfDay(selectedDate),
-        lte: endOfDay(selectedDate)
-      }
-    },
     orderBy: {
       scheduleAt: 'asc'
     }
@@ -77,27 +73,12 @@ export default async function Home({
     }
   }))
 
-  const events = appointmentsWithDuration.map(apt => ({
+  const events: CalendarEvent[] = appointmentsWithDuration.map(apt => ({
     id: apt.id,
     title: `${apt.petName} - ${apt.tutorName}`,
     start: apt.scheduleAt,
     end: apt.endTime,
   }))
-
-  const morningPeriod = events.filter(e => {
-    const hour = e.start.getHours()
-    return hour >= 9 && hour < 12
-  })
-
-  const afternoonPeriod = events.filter(e => {
-    const hour = e.start.getHours()
-    return hour >= 13 && hour < 18
-  })
-
-  const eveningPeriod = events.filter(e => {
-    const hour = e.start.getHours()
-    return hour >= 18 && hour < 21
-  })
 
   return (
     <div className="bg-background-primary p-6" >
@@ -116,12 +97,10 @@ export default async function Home({
         </div>
       </div>
 
-      <div>
-        <CalendarView events={morningPeriod} minHours={9} maxHours={12} />
-        <CalendarView events={afternoonPeriod} minHours={13} maxHours={18} />
-        <CalendarView events={eveningPeriod} minHours={19} maxHours={21} />
-      </div>
-
+      <CalendarSection
+        allAppointments={appointments}
+        services={services}
+      />
       {/*  <div className="mt-3 mb-8 md:hidden">
         <DatePicker />
       </div>

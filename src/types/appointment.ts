@@ -7,7 +7,7 @@ export type Appointment = {
   phone: string;
   servicesIds: string[];
   scheduleAt: Date;
-  period: AppointmentPeriodDay;
+  period?: AppointmentPeriodDay;
 };
 
 export type AppointmentPeriod = {

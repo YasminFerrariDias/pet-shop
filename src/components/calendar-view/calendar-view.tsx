@@ -18,7 +18,7 @@ const localizer = dateFnsLocalizer({
   locales
 })
 
-type Event = {
+export type CalendarEvent = {
   id: string
   title: string
   start: Date
@@ -26,14 +26,22 @@ type Event = {
 }
 
 type CalendarViewProps = {
-  events: Event[],
+  events: CalendarEvent[],
   minHours: number
   maxHours: number
+  view?: string
+  selectedDate: Date
 }
 
-export const CalendarView = ({ events, minHours, maxHours }: CalendarViewProps) => {
+export const CalendarView = ({ events, minHours, maxHours, view, selectedDate }: CalendarViewProps) => {
+  const minDate = new Date(selectedDate)
+  minDate.setHours(minHours, 0, 0, 0)
+
+  const maxDate = new Date(selectedDate)
+  maxDate.setHours(maxHours, 0, 0, 0)
+
   return (
-    <div className='h-150'>
+    <div className='h-fit'>
       <Calendar
         localizer={localizer}
         events={events}
@@ -42,8 +50,9 @@ export const CalendarView = ({ events, minHours, maxHours }: CalendarViewProps) 
         defaultView='day'
         step={60}
         timeslots={1}
-        min={new Date(new Date().setHours(minHours, 0, 0))}
-        max={new Date(new Date().setHours(maxHours, 0, 0))}
+        min={minDate}
+        max={maxDate}
+        date={selectedDate}
         views={['day', 'week', 'month', 'agenda']}
         messages={{
           today: 'Hoje',
@@ -63,6 +72,8 @@ export const CalendarView = ({ events, minHours, maxHours }: CalendarViewProps) 
             return `${format(start, 'HH:mm', { locale: ptBR })} - ${format(end, 'HH:mm', { locale: ptBR })}`
           },
         }}
+        view={view as any}
+        onView={(newView) => console.log(newView)}
         className='bg-background-tertiary rounded-xl p-4'
       />
     </div>
