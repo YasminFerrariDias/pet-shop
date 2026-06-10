@@ -36,14 +36,14 @@ type CalendarViewProps = {
 }
 
 export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
-  const minDate = minHours !== undefined ? new Date(selectedDate) : undefined
-  if (minDate) minDate.setHours(minHours ?? 0, 0, 0)
+  const minDate = new Date(selectedDate)
+  minDate.setHours(minHours ?? 0, 0, 0)
 
-  const maxDate = maxHours !== undefined ? new Date(selectedDate) : undefined
-  if (maxDate) maxDate.setHours(maxHours ?? 0, 0, 0)
+  const maxDate = new Date(selectedDate)
+  maxDate.setHours(maxHours ?? 0, 0, 0)
 
   return (
-    <div className='h-150'>
+    <div className={view === 'day' ? 'h-auto' : 'h-150'}>
       <Calendar
         localizer={localizer}
         events={events}
@@ -68,7 +68,7 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, o
           agenda: 'Agenda',
           date: 'Date',
           time: 'Hora',
-          event: 'Evento'
+          event: 'Evento',
         }}
         formats={{
           timeGutterFormat: (date: Date) => format(date, 'HH:mm', { locale: ptBR }),
