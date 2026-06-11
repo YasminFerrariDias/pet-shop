@@ -1,6 +1,5 @@
 'use client'
 
-import { cn } from "@/lib/utils"
 import { Appointment } from "@/types/appointment"
 import { AppointmentForm } from "../appointment-form/appointment-form"
 import { Button } from "../ui/button"
@@ -14,11 +13,10 @@ import { format, addMinutes } from "date-fns"
 
 type AppointmentCard = {
   appointment: Appointment
-  isFirstInSection?: boolean
   allServices: Service[]
 }
 
-export const AppointmentCard = ({ appointment, isFirstInSection = false, allServices }: AppointmentCard) => {
+export const AppointmentCard = ({ appointment, allServices }: AppointmentCard) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -45,9 +43,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
   const endTime = addMinutes(startTime, totalDuration)
 
   return (
-    <div
-      className={cn("grid grid-cols-2 md:grid-cols-[15%_35%_30%_20%] items-center py-3", !isFirstInSection && "border-t border-border-divisor")}
-    >
+    <div className="bg-brand text-white rounded text-xs h-full min-h-15 flex flex-col justify-between p-2">
       <div className="text-left pr-4 md:pr-0">
         <span className="text-label-small-size text-content-primary font-semibold">
           {format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')}
@@ -78,7 +74,7 @@ export const AppointmentCard = ({ appointment, isFirstInSection = false, allServ
         </span>
       </div>
 
-      <div className="text-right mt-2 md:mt-0 col-span-2 md:col-span-1 flex justify-end items-center gap-2">
+      <div className="flex justify-end gap-1 mr-10">
         <AppointmentForm appointment={appointment} allServices={allServices}>
           <Button variant="edit" size="icon">
             <EditIcon size={16} />

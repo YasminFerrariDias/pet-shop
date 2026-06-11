@@ -50,6 +50,10 @@ export async function checkAvailability(
   serviceIds: string[],
   excludeId?: string
 ) {
+  if (!serviceIds || serviceIds.length === 0) {
+    return true;
+  }
+
   const services = prisma.service.findMany({
     where: {
       id: {
@@ -64,9 +68,52 @@ export async function checkAvailability(
   }, 0);
 
   const endTime = addMinutes(scheduleAt, totalDuration);
+  const hour = endTime.getHours();
+  const minute = endTime.getMinutes();
 
   const startOfTheDay = startOfDay(scheduleAt);
   const endOfTheDay = endOfDay(scheduleAt);
+
+  const isValidTime = () => {
+    if (hour >= 9 && hour < 12) {
+      return;
+    } else if (hour === 12 && minute === 0) {
+      return null;
+    } else if (hour >= 13 && hour < 18) {
+      return null;
+    } else if (hour === 18 && minute === 0) {
+      return null;
+    } else if (hour >= 19 && hour < 21) {
+      return null;
+    } else if (hour === 21 && minute === 0) {
+      return null;
+    }
+  };
+
+  if (hour >= 12 && (hour > 12 || minute > 0)) {
+    return {
+      error: 'Horário de término ultrapassa o horário de fechamento (12h)',
+    };
+  }
+
+  if (hour >= 18 && (hour > 18 || minute > 0)) {
+    return {
+      error: 'Horário de término ultrapassa o horário de fechamento (18h)',
+    };
+  }
+
+  if (hour >= 21 && (hour > 21 || minute > 0)) {
+    return {
+      error: 'Horário de término ultrapassa o horário de fechamento (21h)',
+    };
+  }
+
+  if (!isValidTime) {
+    return {
+      error:
+        'Agendamentos só podem ser feitos entre 9h e 12h, 13h e 18h ou 19h e 21h',
+    };
+  }
 
   const dailyAppointments = await prisma.appointment.findMany({
     where: {
@@ -93,7 +140,6 @@ export async function checkAvailability(
       return { error: 'Já existe um agendamento neste horário' };
     }
   }
-
   return true;
 }
 
@@ -118,6 +164,11 @@ export async function createAppointment(data: AppointmentData) {
       parsedData.scheduleAt,
       parsedData.servicesIds
     );
+
+    if (conflict && typeof conflict === 'object' && 'error' in conflict) {
+      return conflict;
+    }
+
     if (conflict !== true) return conflict;
 
     await prisma?.appointment.create({
