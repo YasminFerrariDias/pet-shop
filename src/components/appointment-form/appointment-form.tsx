@@ -386,6 +386,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                     </FormLabel>
                     <FormControl>
                       <Select
+                        value={field.value}
                         onValueChange={(selectedTime) => {
                           field.onChange(selectedTime)
 

@@ -16,6 +16,10 @@ type CalendarCardProps = {
 }
 
 export const CalendarCard = ({ event, originalAppointment, allServices }: CalendarCardProps) => {
+  console.log('Event ID:', event.id)
+  console.log('Original Appointment:', originalAppointment)
+  console.log('ScheduleAt:', originalAppointment?.scheduleAt)
+
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {

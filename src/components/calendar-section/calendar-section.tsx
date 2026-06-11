@@ -103,6 +103,8 @@ export const CalendarSection = ({
           maxHours={12}
           view={currentView}
           selectedDate={selectedDate}
+          originalAppointments={parsedAppointments}
+          allServices={services}
         />
         <CalendarView
           events={afternoonEventsFiltered}
@@ -110,6 +112,8 @@ export const CalendarSection = ({
           maxHours={18}
           view={currentView}
           selectedDate={selectedDate}
+          originalAppointments={parsedAppointments}
+          allServices={services}
         />
         <CalendarView
           events={eveningEventsFiltered}
@@ -117,6 +121,8 @@ export const CalendarSection = ({
           maxHours={21}
           view={currentView}
           selectedDate={selectedDate}
+          originalAppointments={parsedAppointments}
+          allServices={services}
         />
       </div>
     ) : (
@@ -129,6 +135,8 @@ export const CalendarSection = ({
           selectedDate={selectedDate}
           onViewChange={setCurrentView}
           onDateChange={setSelectedDate}
+          originalAppointments={parsedAppointments}
+          allServices={services}
         />
       </div>
     )

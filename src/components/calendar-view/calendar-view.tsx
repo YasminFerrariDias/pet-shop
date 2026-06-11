@@ -4,6 +4,8 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { CalendarCard } from '../calendar-card'
+import { Appointment } from '@/types/appointment'
+import { Service } from '@/types/service'
 
 const locales = {
   'pt-BR': ptBR
@@ -36,9 +38,11 @@ type CalendarViewProps = {
   selectedDate: Date
   onViewChange?: (view: string) => void
   onDateChange?: (date: Date) => void
+  originalAppointments?: Appointment[]
+  allServices?: Service[]
 }
 
-export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
+export const CalendarView = ({ originalAppointments, allServices, events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
   const minDate = new Date(selectedDate)
   minDate.setHours(minHours ?? 0, 0, 0)
 
@@ -46,8 +50,16 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, o
   maxDate.setHours(maxHours ?? 0, 0, 0)
 
   const EventComponent = ({ event }: { event: CalendarEvent }) => {
+    const originalAppointment = originalAppointments?.find(
+      apt => apt.id === event.id
+    )
+
     return (
-      <CalendarCard event={event} />
+      <CalendarCard
+        event={event}
+        originalAppointment={originalAppointment}
+        allServices={allServices}
+      />
     )
   }
 
