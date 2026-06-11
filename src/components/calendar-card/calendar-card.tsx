@@ -1,16 +1,21 @@
 import { CalendarEvent } from "../calendar-view"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
-import { Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "lucide-react"
+import { Trash2 as DeleteIcon, EditIcon, Loader2 as LoadingIcon } from "lucide-react"
 import { Button } from "../ui/button"
 import { deleteAppointment } from "@/app/actions-appointment"
 import { useState } from "react"
 import { toast } from "sonner"
+import { AppointmentForm } from "../appointment-form/appointment-form"
+import { Appointment } from "@/types/appointment"
+import { Service } from "@/types/service"
 
 type CalendarCardProps = {
   event: CalendarEvent
+  originalAppointment?: Appointment
+  allServices?: Service[]
 }
 
-export const CalendarCard = ({ event }: CalendarCardProps) => {
+export const CalendarCard = ({ event, originalAppointment, allServices }: CalendarCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -42,7 +47,12 @@ export const CalendarCard = ({ event }: CalendarCardProps) => {
       </div>
 
       <div className="flex gap-3 -mt-4">
-        <button>oio</button>
+        <AppointmentForm appointment={originalAppointment} allServices={allServices}>
+          <Button variant="edit" size="icon">
+            <EditIcon size={16} />
+          </Button>
+        </AppointmentForm>
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="remove" size="icon">
