@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from 'zod'
+import z, { number } from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form'
 import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
@@ -116,20 +116,78 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
   const interval = 30
   const requiredSlots = Math.ceil(totalDuration / interval)
 
-  const calculateEnd = (data: AppointFormValues, startTime: string, duration: number) => {
-    const [hour, minute] = data.time.split(':')
-
-    const scheduleAt = setMinutes( // etapa 2 - ajusta o minuto
-      setHours(data.scheduleAt, Number(hour)), // etapa 1 - ajusta a hora
-      Number(minute)
-    )
+  const calculateEnd = (startTime: string, duration: number) => {
+    const [hour, minute] = startTime.split(':').map(Number)
 
     const referenceDate = new Date()
     referenceDate.setHours(hour, minute, 0, 0)
 
-    const endTime = addMinutes(scheduleAt, totalDuration)
+    const endTime = addMinutes(referenceDate, duration)
 
     return format(endTime, 'HH:mm')
+  }
+
+  const validateTimetable = (startTime: string, duration: number, selectedDate: Date): string | null => {
+
+    if (!selectedDate) {
+      return 'Selecione uma data primeiro'
+    }
+
+    const [hour, minute] = startTime.split(':').map(Number)
+
+    const referenceDate = new Date(selectedDate)
+    referenceDate.setHours(hour, minute, 0, 0)
+
+    const endTime = addMinutes(referenceDate, duration)
+
+    const endHour = endTime.getHours()
+
+    const isStartValid =
+      (hour >= 9 && hour < 12) ||
+      (hour >= 13 && hour < 18) ||
+      (hour >= 19 && hour < 21)
+
+    if (!isStartValid) {
+      return 'Horário de início inválido'
+    }
+
+    const isEndValid =
+      (endHour >= 9 && endHour < 12) ||
+      (endHour >= 13 && endHour < 18) ||
+      (endHour >= 19 && endHour < 21)
+
+    if (!isEndValid) {
+      return 'Horário de fim inválido'
+    }
+
+    const occupiedSlots = dayAppointments
+      .filter(apt => apt && apt.scheduleAt)
+      .map(apt => {
+        const totalDuration = (apt.servicesIds || []).reduce((sum, id) => {
+          const service = allServices?.find(s => s.id === id)
+          return sum + (service?.duration || 0)
+        }, 0)
+
+        const endTime = addMinutes(apt.scheduleAt, totalDuration)
+
+        return {
+          start: apt.scheduleAt,
+          end: endTime
+        }
+      })
+
+    const newStart = referenceDate
+    const newEnd = endTime
+
+    const hasConflict = occupiedSlots.some(slot => {
+      return newStart < slot.end && newEnd > slot.start
+    })
+
+    if (hasConflict) {
+      return 'Já existe um agendamento neste horário'
+    }
+
+    return null
   }
 
   useEffect(() => {
@@ -331,14 +389,19 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         onValueChange={(selectedTime) => {
                           field.onChange(selectedTime)
 
-                          const endTime = calculateEnd(selectedTime, totalDuration)
+                          const selectedDate = form.getValues('scheduleAt')
 
-                          const erro = validateTimetable(selectedTime, endTime)
+                          if (!selectedDate) {
+                            setErrorMessage('Selecione uma data primeiro')
+                            return
+                          }
+
+                          const erro = validateTimetable(selectedTime, totalDuration, selectedDate)
 
                           if (erro) {
-                            setMessageErro(erro)
+                            setErrorMessage(erro)
                           } else {
-                            setMessageErro('')
+                            setErrorMessage('')
                           }
                         }}
                       >
@@ -348,19 +411,30 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         </SelectTrigger>
                         <SelectContent>
                           {TIME_OPTION.map((time) => {
+                            const selectedDate = form.getValues('scheduleAt')
+
                             const isOccupied = dayAppointments.some((apt) => {
                               return format(apt.scheduleAt, 'HH:mm') === time
                             })
 
+                            let hasConflict = false
+
+                            if (selectedDate && totalDuration > 0 && !isOccupied) {
+                              hasConflict = validateTimetable(time, totalDuration, selectedDate) !== null
+                            }
+
                             return (
-                              <SelectItem key={time} value={time} disabled={isOccupied}>
-                                {time} {isOccupied && "(ocupado)"}
+                              <SelectItem key={time} value={time} disabled={isOccupied || hasConflict}>
+                                {time} {(isOccupied || hasConflict) && "(indisponível)"}
                               </SelectItem>
                             )
                           })}
                         </SelectContent>
                       </Select>
                     </FormControl>
+                    {errorMessage && (
+                      <p className="text-sm text-red-500 mt-2">{errorMessage}</p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
