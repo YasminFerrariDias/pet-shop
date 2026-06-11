@@ -3,8 +3,7 @@
 import z from 'zod';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { addMinutes, endOfDay, startOfDay, startOfMinute } from 'date-fns';
-import { Appointment } from '@/types/appointment';
+import { addMinutes, endOfDay, startOfDay } from 'date-fns';
 
 const appointmentSchema = z.object({
   tutorName: z.string(),
@@ -46,21 +45,53 @@ export async function validateAppointment(scheduleAt: Date) {
   return true;
 }
 
-// VALIDAÇÃO SE EXISTE ALGUM NO MESMO HORÁRIO
-export async function existenceQuery(scheduleAt: Date) {
-  const existingAppointment = await prisma?.appointment.findFirst({
+export async function checkAvailability(
+  scheduleAt: Date,
+  serviceIds: string[],
+  excludeId?: string
+) {
+  const services = prisma.service.findMany({
     where: {
-      scheduleAt: {
-        gte: startOfMinute(scheduleAt),
-        lte: addMinutes(startOfMinute(scheduleAt), 1),
+      id: {
+        in: serviceIds,
       },
     },
   });
 
-  if (existingAppointment) {
-    return {
-      error: 'Este horário já está reservado',
-    };
+  const totalDuration = (await services).reduce((sum, service) => {
+    sum = sum + service.duration;
+    return sum;
+  }, 0);
+
+  const endTime = addMinutes(scheduleAt, totalDuration);
+
+  const startOfTheDay = startOfDay(scheduleAt);
+  const endOfTheDay = endOfDay(scheduleAt);
+
+  const dailyAppointments = await prisma.appointment.findMany({
+    where: {
+      scheduleAt: {
+        gte: startOfTheDay,
+        lte: endOfTheDay,
+      },
+      ...(excludeId && { id: { not: excludeId } }),
+    },
+  });
+
+  for (const apt of dailyAppointments) {
+    const aptServices = await prisma.service.findMany({
+      where: { id: { in: apt.servicesIds } },
+    });
+
+    const aptDuration = aptServices.reduce((sum, s) => sum + s.duration, 0);
+
+    const aptEndTime = addMinutes(apt.scheduleAt, aptDuration);
+
+    const hasConflict = scheduleAt < aptEndTime && endTime > apt.scheduleAt;
+
+    if (hasConflict) {
+      return { error: 'Já existe um agendamento neste horário' };
+    }
   }
 
   return true;
@@ -83,7 +114,10 @@ export async function createAppointment(data: AppointmentData) {
     const validation = await validateAppointment(parsedData.scheduleAt);
     if (validation !== true) return validation;
 
-    const conflict = await existenceQuery(parsedData.scheduleAt);
+    const conflict = await checkAvailability(
+      parsedData.scheduleAt,
+      parsedData.servicesIds
+    );
     if (conflict !== true) return conflict;
 
     await prisma?.appointment.create({
@@ -108,19 +142,15 @@ export async function updateAppointment(id: string, data: AppointmentData) {
     const validation = await validateAppointment(parsedData.scheduleAt);
     if (validation !== true) return validation;
 
-    const existingAppointment = await prisma?.appointment.findFirst({
-      where: {
-        scheduleAt: parsedData.scheduleAt,
-        id: { not: id },
-      },
-    });
-
     const exists = await appointmentExist(id);
     if (!exists) return { error: 'Agendamento não encontrado' };
 
-    if (existingAppointment) {
-      return { error: 'Este horário já está reservado' };
-    }
+    const conflict = await checkAvailability(
+      parsedData.scheduleAt,
+      parsedData.servicesIds,
+      id
+    );
+    if (conflict !== true) return conflict;
 
     await prisma.appointment.update({
       where: { id },
