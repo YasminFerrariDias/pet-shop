@@ -31,34 +31,45 @@ export const CalendarSection = ({
     return aptDate >= start && aptDate <= end
   })
 
-
   const allEvents = parsedAppointments.map(apt => {
-    const totalDuration = apt.servicesIds.reduce((total, id) => {
-      const service = services.find(s => s.id === id)
+    let totalDuration = 0
+    const serviceNames: string[] = []
 
-      return total + (service?.duration || 0)
-    }, 0)
+    apt.servicesIds.forEach(id => {
+      const service = services.find(s => s.id === id)
+      if (service) {
+        totalDuration += service.duration || 0
+        serviceNames.push(service.serviceName)
+      }
+    })
 
     return {
       id: apt.id,
       title: `${apt.petName} - ${apt.tutorName}`,
       start: apt.scheduleAt,
       end: addMinutes(apt.scheduleAt, Math.max(totalDuration, 30)),
+      serviceNames: serviceNames
     }
   })
 
   const dayEvents = appointmentsOfDay.map(apt => {
-    const totalDuration = apt.servicesIds.reduce((total, id) => {
-      const service = services.find(s => s.id === id)
+    let totalDuration = 0
+    const serviceNames: string[] = []
 
-      return total + (service?.duration || 0)
-    }, 0)
+    apt.servicesIds.forEach(id => {
+      const service = services.find(s => s.id === id)
+      if (service) {
+        totalDuration += service.duration || 0
+        serviceNames.push(service.serviceName)
+      }
+    })
 
     return {
       id: apt.id,
       title: `${apt.petName} - ${apt.tutorName}`,
       start: apt.scheduleAt,
       end: addMinutes(apt.scheduleAt, totalDuration),
+      serviceNames: serviceNames
     }
   })
 
@@ -80,11 +91,33 @@ export const CalendarSection = ({
   return (
     currentView === 'day' ? (
       <div className='flex flex-col gap-2 h-fit'>
-        <CalendarHeader selectedDate={selectedDate} onDateChange={setSelectedDate}
-          onViewChange={setCurrentView} currentView={currentView} />
-        <CalendarView events={morningEventsFiltered} minHours={9} maxHours={12} view={currentView} selectedDate={selectedDate} />
-        <CalendarView events={afternoonEventsFiltered} minHours={13} maxHours={18} view={currentView} selectedDate={selectedDate} />
-        <CalendarView events={eveningEventsFiltered} minHours={19} maxHours={21} view={currentView} selectedDate={selectedDate} />
+        <CalendarHeader
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+          onViewChange={setCurrentView}
+          currentView={currentView}
+        />
+        <CalendarView
+          events={morningEventsFiltered}
+          minHours={9}
+          maxHours={12}
+          view={currentView}
+          selectedDate={selectedDate}
+        />
+        <CalendarView
+          events={afternoonEventsFiltered}
+          minHours={13}
+          maxHours={18}
+          view={currentView}
+          selectedDate={selectedDate}
+        />
+        <CalendarView
+          events={eveningEventsFiltered}
+          minHours={19}
+          maxHours={21}
+          view={currentView}
+          selectedDate={selectedDate}
+        />
       </div>
     ) : (
       <div>

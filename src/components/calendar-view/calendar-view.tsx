@@ -3,6 +3,7 @@
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { CalendarCard } from '../calendar-card'
 
 const locales = {
   'pt-BR': ptBR
@@ -24,6 +25,7 @@ export type CalendarEvent = {
   title: string
   start: Date
   end: Date
+  serviceNames?: string[]
 }
 
 type CalendarViewProps = {
@@ -43,6 +45,12 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, o
   const maxDate = new Date(selectedDate)
   maxDate.setHours(maxHours ?? 0, 0, 0)
 
+  const EventComponent = ({ event }: { event: CalendarEvent }) => {
+    return (
+      <CalendarCard event={event} />
+    )
+  }
+
   return (
     <div className={view === 'day' ? 'h-auto' : 'h-150'}>
       <Calendar
@@ -51,7 +59,7 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, o
         startAccessor='start'
         endAccessor='end'
         defaultView='day'
-        step={60}
+        step={30}
         culture='pt-BR'
         timeslots={1}
         min={minDate}
@@ -79,6 +87,9 @@ export const CalendarView = ({ events, minHours, maxHours, view, selectedDate, o
           },
         }}
         view={view as any}
+        components={{
+          event: EventComponent
+        }}
         className='bg-background-tertiary rounded-xl p-4'
       />
     </div>
