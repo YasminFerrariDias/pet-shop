@@ -16,10 +16,6 @@ type CalendarCardProps = {
 }
 
 export const CalendarCard = ({ event, originalAppointment, allServices }: CalendarCardProps) => {
-  console.log('Event ID:', event.id)
-  console.log('Original Appointment:', originalAppointment)
-  console.log('ScheduleAt:', originalAppointment?.scheduleAt)
-
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -39,7 +35,7 @@ export const CalendarCard = ({ event, originalAppointment, allServices }: Calend
   if (!event) return null
 
   return (
-    <div className="bg-brand text-white rounded text-xs flex justify-between">
+    <div className="bg-brand text-white rounded text-xs flex justify-between relative">
       <div>
         <p className="font-semibold truncate">{event.title}</p>
 
@@ -50,7 +46,7 @@ export const CalendarCard = ({ event, originalAppointment, allServices }: Calend
         )}
       </div>
 
-      <div className="flex gap-3 -mt-4">
+      <div className="flex gap-1.5 -mt-4">
         <AppointmentForm appointment={originalAppointment} allServices={allServices}>
           <Button variant="edit" size="icon">
             <EditIcon size={16} />
