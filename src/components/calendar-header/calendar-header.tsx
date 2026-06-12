@@ -1,6 +1,6 @@
 'use client'
 
-import { addDays, addMonths, format, subDays, subMonths } from "date-fns"
+import { addDays, addMonths, endOfWeek, format, startOfDay, startOfWeek, subDays, subMonths } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 type CalendarHeaderProps = {
@@ -36,8 +36,8 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
   }
 
   return (
-    <div className="custom-toolbar flex justify-between items-center p-4 mb-4 rounded-xl">
-      <div className="flex flex-col gap-2">
+    <div className="custom-toolbar flex text-center flex-col items-center p-4 mb-4 rounded-xl gap-2">
+      <div className="flex flex-col gap-3 justify-center text-center items-center">
         <div className="flex gap-1">
           <button type="button" onClick={handlePrevious}>
             Anterior
@@ -49,6 +49,15 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
             Próximo
           </button>
         </div>
+
+        <span className="custom-toolbar-label pr-1">
+          {currentView === 'day' || 'agenda' ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : ''}
+
+          {currentView === 'week' ? (
+            `${format(startOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}  -  ${format(endOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`) : ''}
+
+          {currentView === 'month' ? format(selectedDate, "MMMM", { locale: ptBR }) : ''}
+        </span>
 
         <div className="flex gap-1">
           <button
@@ -78,9 +87,6 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
         </div>
 
       </div>
-      <span className="custom-toolbar-label pr-1">
-        {format(selectedDate, "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
-      </span>
     </div>
   )
 }
