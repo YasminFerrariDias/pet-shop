@@ -281,7 +281,7 @@
   background-color: var(--color-background-brand);
   color: var(--color-content-primary);
   border-radius: 8px;
-  padding: 1px 5px;
+
   display: flex;
   height: 100px;
   width: auto;

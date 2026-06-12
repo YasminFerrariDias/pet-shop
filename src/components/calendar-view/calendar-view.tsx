@@ -40,9 +40,10 @@ type CalendarViewProps = {
   onDateChange?: (date: Date) => void
   originalAppointments?: Appointment[]
   allServices?: Service[]
+  currentView?: string
 }
 
-export const CalendarView = ({ originalAppointments, allServices, events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
+export const CalendarView = ({ currentView, originalAppointments, allServices, events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
   const minDate = new Date(selectedDate)
   minDate.setHours(minHours ?? 0, 0, 0)
 
@@ -59,6 +60,7 @@ export const CalendarView = ({ originalAppointments, allServices, events, minHou
         event={event}
         originalAppointment={originalAppointment}
         allServices={allServices}
+        currentView={currentView}
       />
     )
   }

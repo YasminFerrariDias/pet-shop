@@ -130,6 +130,7 @@ export const CalendarSection = ({
         <CalendarHeader selectedDate={selectedDate} onDateChange={setSelectedDate}
           onViewChange={setCurrentView} currentView={currentView} />
         <CalendarView
+          currentView={currentView}
           events={allEvents}
           view={currentView}
           selectedDate={selectedDate}

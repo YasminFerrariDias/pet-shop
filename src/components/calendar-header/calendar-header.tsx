@@ -85,7 +85,6 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
             Agenda
           </button>
         </div>
-
       </div>
     </div>
   )

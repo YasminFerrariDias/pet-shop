@@ -13,9 +13,10 @@ type CalendarCardProps = {
   event: CalendarEvent
   originalAppointment?: Appointment
   allServices?: Service[]
+  currentView?: string
 }
 
-export const CalendarCard = ({ event, originalAppointment, allServices }: CalendarCardProps) => {
+export const CalendarCard = ({ currentView, event, originalAppointment, allServices }: CalendarCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -46,7 +47,8 @@ export const CalendarCard = ({ event, originalAppointment, allServices }: Calend
         )}
       </div>
 
-      <div className="flex gap-1.5 -mt-4 ml-auto">
+      <div className={`flex gap-1.5 ml-auto 
+      ${currentView === "agenda" ? '' : 'hidden'}`}>
         <AppointmentForm appointment={originalAppointment} allServices={allServices}>
           <Button variant="edit" size="icon" className="h-8 w-8">
             <EditIcon size={16} />
