@@ -51,7 +51,7 @@ const appointmentFormSchema = z.object({
   return scheduleDateTime > new Date()
 }, {
   path: ['time'],
-  error: 'Horário inválido. Atendimento apenas: 09h-12h, 13h-18h ou 19h-21h'
+  error: 'Horário inválido. Por favor, selecione um horário futuro dentro do expediente de funcionamento'
 })
 
 type AppointFormValues = z.infer<typeof appointmentFormSchema>;
@@ -112,7 +112,6 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
   }
 
   const validateTimetable = (startTime: string, duration: number, selectedDate: Date): string | null => {
-
     if (!selectedDate) {
       return 'Selecione uma data primeiro'
     }
@@ -401,6 +400,21 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         <SelectContent>
                           {TIME_OPTION.map((time) => {
                             const selectedDate = form.getValues('scheduleAt')
+
+                            const now = new Date()
+
+                            const isToday = selectedDate &&
+                              format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
+
+                            let isPastTime = false
+                            if (isToday && selectedDate) {
+                              const [hour, minute] = time.split(':').map(Number)
+                              const optionDate = new Date(selectedDate)
+                              optionDate.setHours(hour, minute, 0, 0)
+                              isPastTime = optionDate < now
+                            }
+
+                            if (isPastTime) return null
 
                             const isOccupied = dayAppointments.some((apt) => {
                               return format(apt.scheduleAt, 'HH:mm') === time
