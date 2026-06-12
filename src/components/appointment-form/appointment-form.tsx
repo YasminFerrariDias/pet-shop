@@ -413,7 +413,12 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                             }
 
                             return (
-                              <SelectItem key={time} value={time} disabled={isOccupied || hasConflict}>
+                              <SelectItem
+                                key={time}
+                                value={time}
+                                disabled={isOccupied || hasConflict}
+                                className={isOccupied || hasConflict ? 'hidden' : ''}
+                              >
                                 {time} {(isOccupied || hasConflict) && "(indisponível)"}
                               </SelectItem>
                             )

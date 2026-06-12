@@ -364,3 +364,12 @@
   background-color: var(--color-background-brand);
   color: white;
 }
+
+.rbc-agenda-time-cell {
+  border: 0px 0px 0px 188px #008015;
+}
+
+.rbc-agenda-view {
+  display: flex;
+  min-height: 10px;
+}
