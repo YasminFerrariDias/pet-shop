@@ -25,7 +25,7 @@ const appointmentFormSchema = z.object({
   tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
   petName: z.string().min(3, "O nome do pet é obrigatório"),
   phone: z.string().min(11, "O telefone é obrigatório"),
-  servicesIds: z.array(z.string()),
+  servicesIds: z.array(z.string()).min(1, "Selecione pelo menos um serviço"),
   scheduleAt: z.date({
     error: 'A data é obrigatória'
   }).min(startOfToday(), {
