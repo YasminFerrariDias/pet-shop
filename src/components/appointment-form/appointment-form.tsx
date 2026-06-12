@@ -114,7 +114,6 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
   }
 
   const interval = 30
-  const requiredSlots = Math.ceil(totalDuration / interval)
 
   const calculateEnd = (startTime: string, duration: number) => {
     const [hour, minute] = startTime.split(':').map(Number)

@@ -36,7 +36,6 @@ export const PeriodSection = ({ period, allServices }: PeriodSectionProps) => {
               <AppointmentCard
                 key={appointment.id}
                 appointment={appointment}
-                isFirstInSection={index === 0}
                 allServices={allServices}
               />
             ))}

@@ -1,6 +1,6 @@
 'use client'
 
-import { addDays, addMonths, endOfWeek, format, startOfDay, startOfWeek, subDays, subMonths } from "date-fns"
+import { addDays, addMonths, endOfWeek, format, startOfWeek, subDays, subMonths } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 type CalendarHeaderProps = {

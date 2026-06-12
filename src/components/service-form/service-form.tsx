@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { createService, updateService } from "@/app/actions-service";
 import { useEffect, useState } from "react";
 import { Service } from "@/types/service";
-import CurrencyInput from 'react-currency-input-field';
 
 const serviceFormSchema = z.object({
   serviceName: z.string().min(3, "O nome do serviço é obrigatório"),

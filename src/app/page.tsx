@@ -2,25 +2,15 @@
 
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
 import { CalendarSection } from "@/components/calendar-section/calendar-section";
-import { CalendarEvent } from "@/components/calendar-view";
 import { ReportSection } from "@/components/report-section";
 import { ServiceForm } from "@/components/service-form/service-form";
 import { ServiceSection } from "@/components/service-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 import { ReportItem } from "@/types/report";
-import { groupAppointmentByPeriod } from "@/utils";
-import { addMinutes, isValid, parseISO } from "date-fns";
 
-export default async function Home({
-  searchParams
-}: {
-  searchParams: Promise<{ date?: string }>
-}) {
-  const { date } = await searchParams
-  const parsedDate = date ? parseISO(date) : new Date()
-  const selectedDate = isValid(parsedDate) ? parsedDate : new Date()
 
+export default async function Home({ }: { searchParams: Promise<{ date?: string }> }) {
   const appointments = await prisma.appointment.findMany({
     orderBy: {
       scheduleAt: 'asc'
@@ -54,28 +44,6 @@ export default async function Home({
       totalRevenue: service.price * amount
     }
   })
-
-  const periods = groupAppointmentByPeriod(appointments)
-
-  const appointmentsWithDuration = appointments.map((apt => {
-    const totalDuration = apt.servicesIds.reduce((total, id) => {
-      const service = services.find(s => s.id === id);
-      return total + (service?.duration || 0)
-    }, 0)
-
-    return {
-      ...apt,
-      totalDuration,
-      endTime: addMinutes(apt.scheduleAt, totalDuration)
-    }
-  }))
-
-  const events: CalendarEvent[] = appointmentsWithDuration.map(apt => ({
-    id: apt.id,
-    title: `${apt.petName} - ${apt.tutorName}`,
-    start: apt.scheduleAt,
-    end: apt.endTime,
-  }))
 
   return (
     <div className="bg-background-primary p-6" >

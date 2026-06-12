@@ -16,16 +16,22 @@ export const getPeriod = (hour: number): AppointmentPeriodDay | null => {
 export function groupAppointmentByPeriod(
   Appointments: AppointmentPrisma[]
 ): AppointmentPeriod[] {
-  const transformedAppointments: Appointment[] = Appointments?.map((apt) => {
+  const validAppointments = Appointments?.filter((apt) => {
     const period = getPeriod(apt.scheduleAt.getHours());
-    if (!period) return null;
+    return period !== null;
+  });
 
-    return {
-      ...apt,
-      servicesIds: apt.servicesIds,
-      period,
-    };
-  }).filter((item): item is Appointment => item !== null);
+  const transformedAppointments: Appointment[] = validAppointments?.map(
+    (apt) => {
+      const period = getPeriod(apt.scheduleAt.getHours())!;
+
+      return {
+        ...apt,
+        servicesIds: apt.servicesIds,
+        period,
+      };
+    }
+  );
 
   const morningAppointments = transformedAppointments.filter(
     (apt) => apt.period === 'morning'
