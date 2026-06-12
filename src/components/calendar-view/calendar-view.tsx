@@ -91,6 +91,7 @@ export const CalendarView = ({ originalAppointments, allServices, events, minHou
           date: 'Date',
           time: 'Hora',
           event: 'Evento',
+          noEventsInRange: 'Nenhum agendamento encontrado neste período!'
         }}
         formats={{
           timeGutterFormat: (date: Date) => format(date, 'HH:mm', { locale: ptBR }),
