@@ -3,9 +3,11 @@ import { ReportItem } from "@/types/report";
 
 type ReportSectionProps = {
   report: ReportItem[];
+  selectedDate: Date
+  currentView: string
 }
 
-export const ReportSection = ({ report }: ReportSectionProps) => {
+export const ReportSection = ({ selectedDate, currentView, report }: ReportSectionProps) => {
   const totalAmount = report.reduce((sum, item) =>
     sum + item.amount, 0
   )

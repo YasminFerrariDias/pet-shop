@@ -2,13 +2,10 @@
 
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
 import { CalendarSection } from "@/components/calendar-section/calendar-section";
-import { ReportSection } from "@/components/report-section";
 import { ServiceForm } from "@/components/service-form/service-form";
 import { ServiceSection } from "@/components/service-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
-import { ReportItem } from "@/types/report";
-
 
 export default async function Home({ }: { searchParams: Promise<{ date?: string }> }) {
   const appointments = await prisma.appointment.findMany({
@@ -29,8 +26,7 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
     price: service.price,
   }))
 
-
-  const servicesWithReport: ReportItem[] = formattedServices.map(service => {
+  const servicesWithReport = formattedServices.map(service => {
     const amount = appointments.filter(apt =>
       apt.servicesIds?.includes(service.id)
     ).length
@@ -61,14 +57,14 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
       <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">
         <div className="flex-1">
           <CalendarSection
+            servicesWithReport={servicesWithReport}
             allAppointments={appointments}
             services={services}
           />
         </div>
 
-        <div className="md:w-90 shrink-0 mb-20">
+        <div>
           <ServiceSection services={formattedServices} />
-          <ReportSection report={servicesWithReport} />
         </div>
       </div>
 

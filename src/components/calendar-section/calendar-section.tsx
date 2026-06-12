@@ -6,15 +6,18 @@ import { CalendarView } from '@/components/calendar-view'
 import { addMinutes, endOfDay, startOfDay } from 'date-fns'
 import { Appointment } from '@/types/appointment'
 import { Service } from '@/types/service'
+import { ReportItem } from '@/types/report'
 
 type CalendarSectionProps = {
   allAppointments: Appointment[]
   services: Service[]
+  servicesWithReport: ReportItem[]
 }
 
 export const CalendarSection = ({
   allAppointments,
-  services
+  services,
+  servicesWithReport
 }: CalendarSectionProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [currentView, setCurrentView] = useState('day')
@@ -96,6 +99,7 @@ export const CalendarSection = ({
           onDateChange={setSelectedDate}
           onViewChange={setCurrentView}
           currentView={currentView}
+          servicesWithReport={servicesWithReport}
         />
         <CalendarView
           events={morningEventsFiltered}
@@ -128,7 +132,7 @@ export const CalendarSection = ({
     ) : (
       <div>
         <CalendarHeader selectedDate={selectedDate} onDateChange={setSelectedDate}
-          onViewChange={setCurrentView} currentView={currentView} />
+          onViewChange={setCurrentView} currentView={currentView} servicesWithReport={servicesWithReport} />
         <CalendarView
           currentView={currentView}
           events={allEvents}
