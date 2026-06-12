@@ -18,6 +18,8 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
       onDateChange(subDays(selectedDate, 7))
     } else if (currentView === 'month') {
       onDateChange(subMonths(selectedDate, 1))
+    } else if (currentView === 'agenda') {
+      onDateChange(subDays(selectedDate, 1))
     }
   }
 
@@ -28,6 +30,8 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
       onDateChange(addDays(selectedDate, 7))
     } else if (currentView === 'month') {
       onDateChange(addMonths(selectedDate, 1))
+    } else if (currentView === 'agenda') {
+      onDateChange(addDays(selectedDate, 1))
     }
   }
 
@@ -64,6 +68,12 @@ export const CalendarHeader = ({ selectedDate, onDateChange, onViewChange, curre
             onClick={() => onViewChange('month')}
           >
             Mês
+          </button>
+          <button
+            className={currentView === 'agenda' ? 'active' : ''}
+            onClick={() => onViewChange('agenda')}
+          >
+            Agenda
           </button>
         </div>
 
