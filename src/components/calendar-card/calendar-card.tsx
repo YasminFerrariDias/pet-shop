@@ -35,7 +35,7 @@ export const CalendarCard = ({ event, originalAppointment, allServices }: Calend
   if (!event) return null
 
   return (
-    <div className="bg-brand text-white rounded text-xs flex justify-between relative">
+    <div className="bg-brand text-white rounded text-xs flex">
       <div>
         <p className="font-semibold truncate">{event.title}</p>
 
@@ -46,16 +46,16 @@ export const CalendarCard = ({ event, originalAppointment, allServices }: Calend
         )}
       </div>
 
-      <div className="flex gap-1.5 -mt-4">
+      <div className="flex gap-1.5 -mt-4 ml-auto">
         <AppointmentForm appointment={originalAppointment} allServices={allServices}>
-          <Button variant="edit" size="icon">
+          <Button variant="edit" size="icon" className="h-8 w-8">
             <EditIcon size={16} />
           </Button>
         </AppointmentForm>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="remove" size="icon">
+            <Button variant="remove" size="icon" className="h-8 w-8">
               <DeleteIcon size={16} />
             </Button>
           </AlertDialogTrigger>

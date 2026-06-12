@@ -95,13 +95,10 @@ export const CalendarView = ({ originalAppointments, allServices, events, minHou
         }}
         formats={{
           timeGutterFormat: (date: Date) => format(date, 'HH:mm', { locale: ptBR }),
-          eventTimeRangeFormat: ({ start, end }: { start: Date; end: Date }) => {
-            return `${format(start, 'HH:mm', { locale: ptBR })} - ${format(end, 'HH:mm', { locale: ptBR })}`
-          },
         }}
         view={view as any}
         components={{
-          event: EventComponent
+          event: EventComponent,
         }}
         className='bg-background-tertiary rounded-xl p-4'
       />
