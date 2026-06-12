@@ -54,7 +54,7 @@ export async function checkAvailability(
     return true;
   }
 
-  const services = prisma.service.findMany({
+  const services = await prisma.service.findMany({
     where: {
       id: {
         in: serviceIds,
@@ -62,58 +62,47 @@ export async function checkAvailability(
     },
   });
 
-  const totalDuration = (await services).reduce((sum, service) => {
-    sum = sum + service.duration;
-    return sum;
+  const totalDuration = services.reduce((sum, service) => {
+    return (sum = sum + service.duration);
   }, 0);
 
   const endTime = addMinutes(scheduleAt, totalDuration);
   const hour = endTime.getHours();
   const minute = endTime.getMinutes();
 
+  const idEndTimeValid =
+    (hour >= 9 && hour < 12) ||
+    (hour === 12 && minute === 0) ||
+    (hour >= 13 && hour < 18) ||
+    (hour === 18 && minute === 0) ||
+    (hour >= 19 && hour < 21) ||
+    (hour === 21 && minute === 0);
+
+  if (!idEndTimeValid) {
+    if (hour >= 12 && hour < 13) {
+      return {
+        error:
+          'Horário de término não pode ser no horário de almoço (12h às 13h)',
+      };
+    }
+
+    if (hour >= 18 && hour < 19) {
+      return {
+        error:
+          'Horário de término não pode ser no intervalo do jantar (18h às 19h)',
+      };
+    }
+
+    if (hour >= 21 && (hour === 21 || minute > 0)) {
+      return {
+        error: 'Horário de término ultrapassa o horário de fechamento (21h)',
+      };
+    }
+    return { error: 'Horário de término inválido' };
+  }
+
   const startOfTheDay = startOfDay(scheduleAt);
   const endOfTheDay = endOfDay(scheduleAt);
-
-  const isValidTime = () => {
-    if (hour >= 9 && hour < 12) {
-      return;
-    } else if (hour === 12 && minute === 0) {
-      return null;
-    } else if (hour >= 13 && hour < 18) {
-      return null;
-    } else if (hour === 18 && minute === 0) {
-      return null;
-    } else if (hour >= 19 && hour < 21) {
-      return null;
-    } else if (hour === 21 && minute === 0) {
-      return null;
-    }
-  };
-
-  if (hour >= 12 && (hour > 12 || minute > 0)) {
-    return {
-      error: 'Horário de término ultrapassa o horário de fechamento (12h)',
-    };
-  }
-
-  if (hour >= 18 && (hour > 18 || minute > 0)) {
-    return {
-      error: 'Horário de término ultrapassa o horário de fechamento (18h)',
-    };
-  }
-
-  if (hour >= 21 && (hour > 21 || minute > 0)) {
-    return {
-      error: 'Horário de término ultrapassa o horário de fechamento (21h)',
-    };
-  }
-
-  if (!isValidTime) {
-    return {
-      error:
-        'Agendamentos só podem ser feitos entre 9h e 12h, 13h e 18h ou 19h e 21h',
-    };
-  }
 
   const dailyAppointments = await prisma.appointment.findMany({
     where: {
