@@ -28,9 +28,7 @@ const appointmentFormSchema = z.object({
   servicesIds: z.array(z.string()).min(1, "Selecione pelo menos um serviço"),
   scheduleAt: z.date({
     error: 'A data é obrigatória'
-  }).min(startOfToday(), {
-    message: 'A data não pode ser no passado'
-  }),
+  }).min(1, 'Selecione uma data primeiro'),
   time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
     message: "Formato inválido. Use HH:mm (ex: 14:30)"
   })
@@ -111,19 +109,6 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
 
     setIsOpen(false)
     form.reset()
-  }
-
-  const interval = 30
-
-  const calculateEnd = (startTime: string, duration: number) => {
-    const [hour, minute] = startTime.split(':').map(Number)
-
-    const referenceDate = new Date()
-    referenceDate.setHours(hour, minute, 0, 0)
-
-    const endTime = addMinutes(referenceDate, duration)
-
-    return format(endTime, 'HH:mm')
   }
 
   const validateTimetable = (startTime: string, duration: number, selectedDate: Date): string | null => {
@@ -386,6 +371,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                     <FormControl>
                       <Select
                         value={field.value}
+                        disabled={!form.watch('scheduleAt')}
                         onValueChange={(selectedTime) => {
                           field.onChange(selectedTime)
 
@@ -405,7 +391,10 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                           }
                         }}
                       >
-                        <SelectTrigger className="flex items-center gap-2">
+                        <SelectTrigger
+                          className="flex items-center gap-2"
+                          title={!form.watch('scheduleAt') ? "Primeiro selecione uma data!" : ''}
+                        >
                           <Clock className="h-4 w-4 text-content-brand" />
                           <SelectValue placeholder="--:-- --" />
                         </SelectTrigger>
