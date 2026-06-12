@@ -35,6 +35,8 @@ export const CalendarCard = ({ currentView, event, originalAppointment, allServi
 
   if (!event) return null
 
+  const isPast = new Date() > new Date(event.end)
+
   return (
     <div className="bg-brand text-white rounded text-xs flex">
       <div>
@@ -49,11 +51,13 @@ export const CalendarCard = ({ currentView, event, originalAppointment, allServi
 
       <div className={`flex gap-1.5 ml-auto 
       ${currentView === "agenda" ? '' : 'hidden'}`}>
-        <AppointmentForm appointment={originalAppointment} allServices={allServices}>
-          <Button variant="edit" size="icon" className="h-8 w-8">
-            <EditIcon size={16} />
-          </Button>
-        </AppointmentForm>
+        {!isPast && (
+          <AppointmentForm appointment={originalAppointment} allServices={allServices}>
+            <Button variant="edit" size="icon" className="h-8 w-8">
+              <EditIcon size={16} />
+            </Button>
+          </AppointmentForm>
+        )}
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
