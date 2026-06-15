@@ -53,7 +53,7 @@ export const CalendarHeader = ({ reportData, selectedDate, onDateChange, onViewC
           </button>
         </div>
 
-        <span className="custom-toolbar-label pr-1">
+        <span className="custom-toolbar-label p-2">
           {currentView === 'day' || currentView === 'agenda' ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : ''}
 
           {currentView === 'week' ? (

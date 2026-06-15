@@ -210,7 +210,7 @@ export const CalendarSection = ({
   return (
     currentView === 'day' ? (
       <div>
-        <div className='flex flex-col gap-2 h-fit'>
+        <div className='flex flex-col gap-2 h-fit *:'>
           <CalendarHeader
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
@@ -218,6 +218,7 @@ export const CalendarSection = ({
             currentView={currentView}
             reportData={reportData}
           />
+          <h1 className='text-center p-2 pt-5'>AGENDA DIÁRIA</h1>
           <CalendarView
             events={morningEventsFiltered}
             minHours={9}
@@ -245,9 +246,10 @@ export const CalendarSection = ({
             originalAppointments={parsedAppointments}
             allServices={services}
           />
-        </div>
-        <div>
-          <ServiceSection services={formattedServices} />
+
+          <div>
+            <ServiceSection services={formattedServices} />
+          </div>
         </div>
       </div>
     ) : (
@@ -260,6 +262,12 @@ export const CalendarSection = ({
             currentView={currentView}
             reportData={reportData}
           />
+
+          <h1 className='text-center p-2 pt-5'>
+            AGENDA
+            {currentView === 'week' ? ' SEMANAL' : currentView === 'month' ? ' MENSAL' : ' DIÁRIA'}
+          </h1>
+
           <CalendarView
             currentView={currentView}
             events={allEvents}
@@ -270,9 +278,9 @@ export const CalendarSection = ({
             originalAppointments={parsedAppointments}
             allServices={services}
           />
-        </div>
-        <div>
-          <ServiceSection services={formattedServices} />
+          <div className='mt-2'>
+            <ServiceSection services={formattedServices} />
+          </div>
         </div>
       </div>
     )
