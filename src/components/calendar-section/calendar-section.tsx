@@ -233,7 +233,7 @@ export const CalendarSection = ({
         </div>
       </div>
     ) : (
-      <div className='pb-55 flex'>
+      <div>
         <CalendarHeader
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
