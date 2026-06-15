@@ -39,56 +39,54 @@ export const CalendarHeader = ({ reportData, selectedDate, onDateChange, onViewC
   }
 
   return (
-    <div className="md:w-90 shrink-0 mb-20 flex flex-col md:flex-row justify-between items-center gap-4 w-full">
-      <div className="custom-toolbar flex text-center flex-col items-center p-4 mb-4 rounded-xl gap-2">
-        <div className="flex flex-col gap-3 justify-center text-center items-center">
-          <div className="flex gap-1">
-            <button type="button" onClick={handlePrevious}>
-              Anterior
-            </button>
-            <button type="button" onClick={() => onDateChange(new Date())}>
-              Hoje
-            </button>
-            <button type="button" onClick={handleNext}>
-              Próximo
-            </button>
-          </div>
+    <div className="flex flex-col md:flex-row gap-2 justify-between">
+      <div className="custom-toolbar flex text-center flex-col items-center p-4 rounded-xl gap-2 justify-center w-full ">
+        <div className="flex gap-1">
+          <button type="button" onClick={handlePrevious}>
+            Anterior
+          </button>
+          <button type="button" onClick={() => onDateChange(new Date())}>
+            Hoje
+          </button>
+          <button type="button" onClick={handleNext}>
+            Próximo
+          </button>
+        </div>
 
-          <span className="custom-toolbar-label pr-1">
-            {currentView === 'day' || currentView === 'agenda' ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : ''}
+        <span className="custom-toolbar-label pr-1">
+          {currentView === 'day' || currentView === 'agenda' ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : ''}
 
-            {currentView === 'week' ? (
-              `${format(startOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}  -  ${format(endOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`) : ''}
+          {currentView === 'week' ? (
+            `${format(startOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}  -  ${format(endOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`) : ''}
 
-            {currentView === 'month' ? format(selectedDate, "MMMM", { locale: ptBR }) : ''}
-          </span>
+          {currentView === 'month' ? format(selectedDate, "MMMM", { locale: ptBR }) : ''}
+        </span>
 
-          <div className="flex gap-1">
-            <button
-              className={currentView === 'day' ? 'active' : ''}
-              onClick={() => onViewChange('day')}
-            >
-              Dia
-            </button>
-            <button
-              className={currentView === 'week' ? 'active' : ''}
-              onClick={() => onViewChange('week')}
-            >
-              Semana
-            </button>
-            <button
-              className={currentView === 'month' ? 'active' : ''}
-              onClick={() => onViewChange('month')}
-            >
-              Mês
-            </button>
-            <button
-              className={currentView === 'agenda' ? 'active' : ''}
-              onClick={() => onViewChange('agenda')}
-            >
-              Agenda
-            </button>
-          </div>
+        <div className="flex gap-1">
+          <button
+            className={currentView === 'day' ? 'active' : ''}
+            onClick={() => onViewChange('day')}
+          >
+            Dia
+          </button>
+          <button
+            className={currentView === 'week' ? 'active' : ''}
+            onClick={() => onViewChange('week')}
+          >
+            Semana
+          </button>
+          <button
+            className={currentView === 'month' ? 'active' : ''}
+            onClick={() => onViewChange('month')}
+          >
+            Mês
+          </button>
+          <button
+            className={currentView === 'agenda' ? 'active' : ''}
+            onClick={() => onViewChange('agenda')}
+          >
+            Agenda
+          </button>
         </div>
       </div>
       <ReportSection

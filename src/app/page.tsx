@@ -3,7 +3,6 @@
 import { AppointmentForm } from "@/components/appointment-form/appointment-form";
 import { CalendarSection } from "@/components/calendar-section/calendar-section";
 import { ServiceForm } from "@/components/service-form/service-form";
-import { ServiceSection } from "@/components/service-section";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 
@@ -45,10 +44,6 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
             allAppointments={appointments}
             services={services}
           />
-        </div>
-
-        <div>
-          <ServiceSection services={formattedServices} />
         </div>
       </div>
 

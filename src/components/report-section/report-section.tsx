@@ -17,7 +17,7 @@ export const ReportSection = ({ selectedDate, currentView, report }: ReportSecti
   )
 
   return (
-    <section className="mb-8 bg-background-tertiary rounded-xl md:w-full">
+    <section className="bg-background-tertiary rounded-xl w-full md:max-w-100">
       <div className="flex items-center px-5 py-3 justify-between border-b border-[#2E2C30]">
         <div className="flex items-center gap-2">
           <h2 className="text-title-size text-content-primary">

@@ -7,6 +7,7 @@ import { addMinutes, endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, 
 import { Appointment } from '@/types/appointment'
 import { Service } from '@/types/service'
 import { ReportItem } from '@/types/report'
+import { ServiceSection } from '../service-section'
 
 type CalendarSectionProps = {
   allAppointments: Appointment[]
@@ -130,6 +131,12 @@ export const CalendarSection = ({
     }
   })
 
+  const formattedServices = services.map(service => ({
+    ...service,
+    duration: service.duration,
+    price: service.price,
+  }))
+
   function visualizationBasedReport() {
     let servicesWithReport: ReportItem[] = []
 
@@ -202,61 +209,71 @@ export const CalendarSection = ({
 
   return (
     currentView === 'day' ? (
-      <div className='flex flex-col gap-2 h-fit'>
-        <CalendarHeader
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          onViewChange={setCurrentView}
-          currentView={currentView}
-          reportData={reportData}
-        />
-        <CalendarView
-          events={morningEventsFiltered}
-          minHours={9}
-          maxHours={12}
-          view={currentView}
-          selectedDate={selectedDate}
-          originalAppointments={parsedAppointments}
-          allServices={services}
-        />
-        <CalendarView
-          events={afternoonEventsFiltered}
-          minHours={13}
-          maxHours={18}
-          view={currentView}
-          selectedDate={selectedDate}
-          originalAppointments={parsedAppointments}
-          allServices={services}
-        />
-        <CalendarView
-          events={eveningEventsFiltered}
-          minHours={19}
-          maxHours={21}
-          view={currentView}
-          selectedDate={selectedDate}
-          originalAppointments={parsedAppointments}
-          allServices={services}
-        />
+      <div>
+        <div className='flex flex-col gap-2 h-fit'>
+          <CalendarHeader
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            onViewChange={setCurrentView}
+            currentView={currentView}
+            reportData={reportData}
+          />
+          <CalendarView
+            events={morningEventsFiltered}
+            minHours={9}
+            maxHours={12}
+            view={currentView}
+            selectedDate={selectedDate}
+            originalAppointments={parsedAppointments}
+            allServices={services}
+          />
+          <CalendarView
+            events={afternoonEventsFiltered}
+            minHours={13}
+            maxHours={18}
+            view={currentView}
+            selectedDate={selectedDate}
+            originalAppointments={parsedAppointments}
+            allServices={services}
+          />
+          <CalendarView
+            events={eveningEventsFiltered}
+            minHours={19}
+            maxHours={21}
+            view={currentView}
+            selectedDate={selectedDate}
+            originalAppointments={parsedAppointments}
+            allServices={services}
+          />
+        </div>
+        <div>
+          <ServiceSection services={formattedServices} />
+        </div>
       </div>
     ) : (
       <div>
-        <CalendarHeader
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          onViewChange={setCurrentView}
-          currentView={currentView}
-          reportData={reportData}
-        />
-        <CalendarView
-          currentView={currentView}
-          events={allEvents}
-          view={currentView}
-          selectedDate={selectedDate}
-          onViewChange={setCurrentView}
-          onDateChange={setSelectedDate}
-          originalAppointments={parsedAppointments}
-          allServices={services}
-        />
+        <div>
+          <CalendarHeader
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            onViewChange={setCurrentView}
+            currentView={currentView}
+            reportData={reportData}
+          />
+          <CalendarView
+            currentView={currentView}
+            events={allEvents}
+            view={currentView}
+            selectedDate={selectedDate}
+            onViewChange={setCurrentView}
+            onDateChange={setSelectedDate}
+            originalAppointments={parsedAppointments}
+            allServices={services}
+          />
+        </div>
+        <div>
+          <ServiceSection services={formattedServices} />
+        </div>
       </div>
     )
   )
