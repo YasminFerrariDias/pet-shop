@@ -26,21 +26,6 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
     price: service.price,
   }))
 
-  const servicesWithReport = formattedServices.map(service => {
-    const amount = appointments.filter(apt =>
-      apt.servicesIds?.includes(service.id)
-    ).length
-
-    return {
-      id: service.id,
-      serviceName: service.serviceName,
-      price: service.price,
-      duration: service.duration,
-      amount: amount,
-      totalRevenue: service.price * amount
-    }
-  })
-
   return (
     <div className="bg-background-primary p-6" >
       <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto ml-auto">
@@ -57,7 +42,6 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
       <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">
         <div className="flex-1">
           <CalendarSection
-            servicesWithReport={servicesWithReport}
             allAppointments={appointments}
             services={services}
           />

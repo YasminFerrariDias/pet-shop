@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { CalendarHeader } from '@/components/calendar-header/calendar-header'
 import { CalendarView } from '@/components/calendar-view'
-import { addMinutes, endOfDay, startOfDay } from 'date-fns'
+import { addMinutes, endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from 'date-fns'
 import { Appointment } from '@/types/appointment'
 import { Service } from '@/types/service'
 import { ReportItem } from '@/types/report'
@@ -11,13 +11,11 @@ import { ReportItem } from '@/types/report'
 type CalendarSectionProps = {
   allAppointments: Appointment[]
   services: Service[]
-  servicesWithReport: ReportItem[]
 }
 
 export const CalendarSection = ({
   allAppointments,
   services,
-  servicesWithReport
 }: CalendarSectionProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [currentView, setCurrentView] = useState('day')
@@ -32,6 +30,20 @@ export const CalendarSection = ({
     const start = startOfDay(selectedDate)
     const end = endOfDay(selectedDate)
     return aptDate >= start && aptDate <= end
+  })
+
+  const appointmentsOfWeek = parsedAppointments.filter(apt => {
+    const aptWeek = apt.scheduleAt
+    const start = startOfWeek(selectedDate)
+    const end = endOfWeek(selectedDate)
+    return aptWeek >= start && aptWeek <= end
+  })
+
+  const appointmentsOfMonth = parsedAppointments.filter(apt => {
+    const aptMonth = apt.scheduleAt
+    const start = startOfMonth(selectedDate)
+    const end = endOfMonth(selectedDate)
+    return aptMonth >= start && aptMonth <= end
   })
 
   const allEvents = parsedAppointments.map(apt => {
@@ -76,6 +88,103 @@ export const CalendarSection = ({
     }
   })
 
+  const weekEvents = appointmentsOfWeek.map(apt => {
+    let totalDuration = 0
+    const serviceNames: string[] = []
+
+    apt.servicesIds.forEach(id => {
+      const service = services.find(s => s.id === id)
+      if (service) {
+        totalDuration += service.duration || 0
+        serviceNames.push(service.serviceName)
+      }
+    })
+
+    return {
+      id: apt.id,
+      title: `${apt.petName} - ${apt.tutorName}`,
+      start: apt.scheduleAt,
+      end: addMinutes(apt.scheduleAt, totalDuration),
+      serviceNames: serviceNames
+    }
+  })
+
+  const monthEvents = appointmentsOfMonth.map(apt => {
+    let totalDuration = 0
+    const serviceNames: string[] = []
+
+    apt.servicesIds.forEach(id => {
+      const service = services.find(s => s.id === id)
+      if (service) {
+        totalDuration += service.duration || 0
+        serviceNames.push(service.serviceName)
+      }
+    })
+
+    return {
+      id: apt.id,
+      title: `${apt.petName} - ${apt.tutorName}`,
+      start: apt.scheduleAt,
+      end: addMinutes(apt.scheduleAt, totalDuration),
+      serviceNames: serviceNames
+    }
+  })
+
+  function visualizationBasedReport() {
+    let servicesWithReport: ReportItem[] = []
+
+    if (currentView === 'day' || currentView === 'agenda') {
+      servicesWithReport = services.map(service => {
+        const amount = appointmentsOfDay.filter(apt =>
+          apt.servicesIds?.includes(service.id)
+        ).length
+
+        return {
+          id: service.id,
+          serviceName: service.serviceName,
+          price: service.price,
+          duration: service.duration,
+          amount: amount,
+          totalRevenue: service.price * amount
+        }
+      })
+    } else if (currentView === 'week') {
+      servicesWithReport = services.map(service => {
+        const amount = appointmentsOfWeek.filter(apt =>
+          apt.servicesIds?.includes(service.id)
+        ).length
+
+        return {
+          id: service.id,
+          serviceName: service.serviceName,
+          price: service.price,
+          duration: service.duration,
+          amount: amount,
+          totalRevenue: service.price * amount
+        }
+      })
+    } else if (currentView === 'month') {
+      servicesWithReport = services.map(service => {
+        const amount = appointmentsOfMonth.filter(apt =>
+          apt.servicesIds?.includes(service.id)
+        ).length
+
+        return {
+          id: service.id,
+          serviceName: service.serviceName,
+          price: service.price,
+          duration: service.duration,
+          amount: amount,
+          totalRevenue: service.price * amount
+        }
+      })
+    }
+
+    return servicesWithReport
+  }
+
+  const reportData = visualizationBasedReport()
+
   const morningEventsFiltered = dayEvents.filter(e => {
     const hour = e.start.getHours()
     return hour >= 9 && hour < 12
@@ -99,7 +208,7 @@ export const CalendarSection = ({
           onDateChange={setSelectedDate}
           onViewChange={setCurrentView}
           currentView={currentView}
-          servicesWithReport={servicesWithReport}
+          reportData={reportData}
         />
         <CalendarView
           events={morningEventsFiltered}
@@ -131,8 +240,13 @@ export const CalendarSection = ({
       </div>
     ) : (
       <div>
-        <CalendarHeader selectedDate={selectedDate} onDateChange={setSelectedDate}
-          onViewChange={setCurrentView} currentView={currentView} servicesWithReport={servicesWithReport} />
+        <CalendarHeader
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+          onViewChange={setCurrentView}
+          currentView={currentView}
+          reportData={reportData}
+        />
         <CalendarView
           currentView={currentView}
           events={allEvents}

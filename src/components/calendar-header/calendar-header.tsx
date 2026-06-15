@@ -10,10 +10,10 @@ type CalendarHeaderProps = {
   onDateChange: (date: Date) => void
   onViewChange: (view: string) => void
   currentView: string
-  servicesWithReport: ReportItem[]
+  reportData: ReportItem[]
 }
 
-export const CalendarHeader = ({ servicesWithReport, selectedDate, onDateChange, onViewChange, currentView }: CalendarHeaderProps) => {
+export const CalendarHeader = ({ reportData, selectedDate, onDateChange, onViewChange, currentView }: CalendarHeaderProps) => {
   const handlePrevious = () => {
     if (currentView === 'day') {
       onDateChange(subDays(selectedDate, 1))
@@ -39,7 +39,7 @@ export const CalendarHeader = ({ servicesWithReport, selectedDate, onDateChange,
   }
 
   return (
-    <div className="md:w-90 shrink-0 mb-20">
+    <div className="md:w-90 shrink-0 mb-20 flex flex-col md:flex-row justify-between items-center gap-4 w-full">
       <div className="custom-toolbar flex text-center flex-col items-center p-4 mb-4 rounded-xl gap-2">
         <div className="flex flex-col gap-3 justify-center text-center items-center">
           <div className="flex gap-1">
@@ -92,7 +92,7 @@ export const CalendarHeader = ({ servicesWithReport, selectedDate, onDateChange,
         </div>
       </div>
       <ReportSection
-        report={servicesWithReport}
+        report={reportData}
         selectedDate={selectedDate}
         currentView={currentView}
       />
