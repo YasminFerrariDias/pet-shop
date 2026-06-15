@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { CalendarHeader } from '@/components/calendar-header/calendar-header'
 import { CalendarView } from '@/components/calendar-view'
-import { addMinutes, endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from 'date-fns'
+import { addMinutes, endOfDay, endOfMonth, endOfWeek, endOfYear, startOfDay, startOfMonth, startOfWeek, startOfYear } from 'date-fns'
 import { Appointment } from '@/types/appointment'
 import { Service } from '@/types/service'
 import { ReportItem } from '@/types/report'
@@ -45,6 +45,13 @@ export const CalendarSection = ({
     const start = startOfMonth(selectedDate)
     const end = endOfMonth(selectedDate)
     return aptMonth >= start && aptMonth <= end
+  })
+
+  const appointmentsOfAgenda = parsedAppointments.filter(apt => {
+    const aptAgenda = apt.scheduleAt
+    const start = startOfYear(selectedDate)
+    const end = endOfYear(selectedDate)
+    return aptAgenda >= start && aptAgenda <= end
   })
 
   const allEvents = parsedAppointments.map(apt => {
@@ -89,48 +96,6 @@ export const CalendarSection = ({
     }
   })
 
-  const weekEvents = appointmentsOfWeek.map(apt => {
-    let totalDuration = 0
-    const serviceNames: string[] = []
-
-    apt.servicesIds.forEach(id => {
-      const service = services.find(s => s.id === id)
-      if (service) {
-        totalDuration += service.duration || 0
-        serviceNames.push(service.serviceName)
-      }
-    })
-
-    return {
-      id: apt.id,
-      title: `${apt.petName} - ${apt.tutorName}`,
-      start: apt.scheduleAt,
-      end: addMinutes(apt.scheduleAt, totalDuration),
-      serviceNames: serviceNames
-    }
-  })
-
-  const monthEvents = appointmentsOfMonth.map(apt => {
-    let totalDuration = 0
-    const serviceNames: string[] = []
-
-    apt.servicesIds.forEach(id => {
-      const service = services.find(s => s.id === id)
-      if (service) {
-        totalDuration += service.duration || 0
-        serviceNames.push(service.serviceName)
-      }
-    })
-
-    return {
-      id: apt.id,
-      title: `${apt.petName} - ${apt.tutorName}`,
-      start: apt.scheduleAt,
-      end: addMinutes(apt.scheduleAt, totalDuration),
-      serviceNames: serviceNames
-    }
-  })
-
   const formattedServices = services.map(service => ({
     ...service,
     duration: service.duration,
@@ -140,7 +105,7 @@ export const CalendarSection = ({
   function visualizationBasedReport() {
     let servicesWithReport: ReportItem[] = []
 
-    if (currentView === 'day' || currentView === 'agenda') {
+    if (currentView === 'day') {
       servicesWithReport = services.map(service => {
         const amount = appointmentsOfDay.filter(apt =>
           apt.servicesIds?.includes(service.id)
@@ -173,6 +138,21 @@ export const CalendarSection = ({
     } else if (currentView === 'month') {
       servicesWithReport = services.map(service => {
         const amount = appointmentsOfMonth.filter(apt =>
+          apt.servicesIds?.includes(service.id)
+        ).length
+
+        return {
+          id: service.id,
+          serviceName: service.serviceName,
+          price: service.price,
+          duration: service.duration,
+          amount: amount,
+          totalRevenue: service.price * amount
+        }
+      })
+    } else if (currentView === 'agenda') {
+      servicesWithReport = services.map(service => {
+        const amount = appointmentsOfAgenda.filter(apt =>
           apt.servicesIds?.includes(service.id)
         ).length
 
@@ -265,7 +245,7 @@ export const CalendarSection = ({
 
           <h1 className='text-center p-2 pt-5'>
             AGENDA
-            {currentView === 'week' ? ' SEMANAL' : currentView === 'month' ? ' MENSAL' : ' DIÁRIA'}
+            {currentView === 'week' ? ' SEMANAL' : currentView === 'month' ? ' MENSAL' : ' ANUAL'}
           </h1>
 
           <CalendarView

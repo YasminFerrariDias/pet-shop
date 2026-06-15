@@ -1,6 +1,6 @@
 'use client'
 
-import { addDays, addMonths, endOfWeek, format, startOfWeek, subDays, subMonths } from "date-fns"
+import { addDays, addMonths, addYears, endOfWeek, format, startOfWeek, startOfYear, subDays, subMonths, subYears } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ReportSection } from "../report-section"
 import { ReportItem } from "@/types/report"
@@ -22,7 +22,7 @@ export const CalendarHeader = ({ reportData, selectedDate, onDateChange, onViewC
     } else if (currentView === 'month') {
       onDateChange(subMonths(selectedDate, 1))
     } else if (currentView === 'agenda') {
-      onDateChange(subDays(selectedDate, 1))
+      onDateChange(subYears(selectedDate, 1))
     }
   }
 
@@ -33,8 +33,9 @@ export const CalendarHeader = ({ reportData, selectedDate, onDateChange, onViewC
       onDateChange(addDays(selectedDate, 7))
     } else if (currentView === 'month') {
       onDateChange(addMonths(selectedDate, 1))
-    } else if (currentView === 'agenda') {
-      onDateChange(addDays(selectedDate, 1))
+    }
+    else if (currentView === 'agenda') {
+      onDateChange(addYears(selectedDate, 1))
     }
   }
 
@@ -54,12 +55,14 @@ export const CalendarHeader = ({ reportData, selectedDate, onDateChange, onViewC
         </div>
 
         <span className="custom-toolbar-label p-2">
-          {currentView === 'day' || currentView === 'agenda' ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : ''}
+          {currentView === 'day' ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : ''}
 
           {currentView === 'week' ? (
             `${format(startOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}  -  ${format(endOfWeek(selectedDate, { weekStartsOn: 1 }), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`) : ''}
 
           {currentView === 'month' ? format(selectedDate, "MMMM", { locale: ptBR }) : ''}
+
+          {currentView === 'agenda' ? format(selectedDate, "yyyy", { locale: ptBR }) : ''}
         </span>
 
         <div className="flex gap-1">
