@@ -13,7 +13,8 @@ export const ReportCard = ({ reportItem, isFirstInSection = false }: ServiceCard
     <div
       className={cn
         (`grid justify-between grid-cols-[70%_30%] items-center py-3 md:grid-cols-[70%_30%]`,
-          !isFirstInSection && "border-t border-border-divisor"
+          !isFirstInSection && "border-t border-border-divisor",
+          reportItem.amount === 0 && 'hidden'
         )}
     >
       <div className="text-left flex-1 mr-2">
