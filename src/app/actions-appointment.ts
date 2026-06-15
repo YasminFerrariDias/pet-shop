@@ -70,6 +70,36 @@ export async function checkAvailability(
   const hour = endTime.getHours();
   const minute = endTime.getMinutes();
 
+  const startAppointment = scheduleAt.getHours();
+  const totalEndMinutes = hour * 60 + minute;
+
+  const limitMorning = 12 * 60;
+  const limitAfternoon = 18 * 60;
+  const limitEverning = 21 * 60;
+
+  if (startAppointment >= 9 && startAppointment < 12) {
+    if (totalEndMinutes > limitMorning) {
+      return {
+        error:
+          'O agendamento não pode ultrapassar o horário de almoço (12h às 13h)',
+      };
+    }
+  } else if (startAppointment >= 13 && startAppointment < 18) {
+    if (totalEndMinutes > limitAfternoon) {
+      return {
+        error:
+          'O agendamento não pode ultrapassar o intervalo do jantar (18h às 19h)',
+      };
+    }
+  } else if (startAppointment >= 19 && startAppointment < 21) {
+    if (totalEndMinutes > limitEverning) {
+      return {
+        error:
+          'O agendamento não pode ultrapassar o horário de fechamento (21h)',
+      };
+    }
+  }
+
   const idEndTimeValid =
     (hour >= 9 && hour < 12) ||
     (hour === 12 && minute === 0) ||

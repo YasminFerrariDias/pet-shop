@@ -398,45 +398,116 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                           <SelectValue placeholder="--:-- --" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TIME_OPTION.map((time) => {
-                            const selectedDate = form.getValues('scheduleAt')
+                          {(() => {
+                            const availableTimes = TIME_OPTION.filter((time) => {
+                              const selectedDate = form.getValues('scheduleAt')
+                              const now = new Date()
+                              const isToday = selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
 
-                            const now = new Date()
+                              let isPastTime = false
+                              if (isToday && selectedDate) {
+                                const [hour, minute] = time.split(':').map(Number)
+                                const optionDate = new Date(selectedDate)
+                                optionDate.setHours(hour, minute, 0, 0)
+                                isPastTime = optionDate < now
+                              }
+                              if (isPastTime) return false
 
-                            const isToday = selectedDate &&
-                              format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
+                              const isOccupied = dayAppointments.some((apt) => format(apt.scheduleAt, 'HH:mm') === time)
+                              if (isOccupied) return false
 
-                            let isPastTime = false
-                            if (isToday && selectedDate) {
-                              const [hour, minute] = time.split(':').map(Number)
-                              const optionDate = new Date(selectedDate)
-                              optionDate.setHours(hour, minute, 0, 0)
-                              isPastTime = optionDate < now
-                            }
+                              let hasConflict = false
+                              if (selectedDate && totalDuration > 0 && !isOccupied) {
+                                hasConflict = validateTimetable(time, totalDuration, selectedDate) !== null
+                              }
+                              if (hasConflict) return false
 
-                            if (isPastTime) return null
+                              let isOverLimit = false
+                              if (selectedDate && totalDuration > 0) {
+                                const [hour, minute] = time.split(':').map(Number)
+                                const startTime = new Date(selectedDate)
+                                startTime.setHours(hour, minute, 0, 0)
+                                const endTime = addMinutes(startTime, totalDuration)
+                                const endHour = endTime.getHours()
+                                const endMinute = endTime.getMinutes()
+                                const totalEndMinutes = endHour * 60 + endMinute
 
-                            const isOccupied = dayAppointments.some((apt) => {
-                              return format(apt.scheduleAt, 'HH:mm') === time
+                                if (hour >= 9 && hour < 12) isOverLimit = totalEndMinutes > 12 * 60
+                                else if (hour >= 13 && hour < 18) isOverLimit = totalEndMinutes > 18 * 60
+                                else if (hour >= 19 && hour < 21) isOverLimit = totalEndMinutes > 21 * 60
+                              }
+
+                              return !isOverLimit
                             })
 
-                            let hasConflict = false
+                            if (availableTimes.length === 0) {
+                              return (
+                                <div className="p-2 text-center text-sm">
+                                  Nenhum horário disponível
+                                </div>
+                              )
+                            } else {
+                              return TIME_OPTION.map((time) => {
+                                const selectedDate = form.getValues('scheduleAt')
 
-                            if (selectedDate && totalDuration > 0 && !isOccupied) {
-                              hasConflict = validateTimetable(time, totalDuration, selectedDate) !== null
+                                const now = new Date()
+
+                                const isToday = selectedDate &&
+                                  format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
+
+                                let isPastTime = false
+                                if (isToday && selectedDate) {
+                                  const [hour, minute] = time.split(':').map(Number)
+                                  const optionDate = new Date(selectedDate)
+                                  optionDate.setHours(hour, minute, 0, 0)
+                                  isPastTime = optionDate < now
+                                }
+
+                                if (isPastTime) return null
+
+                                const isOccupied = dayAppointments.some((apt) => {
+                                  return format(apt.scheduleAt, 'HH:mm') === time
+                                })
+
+                                let hasConflict = false
+
+                                if (selectedDate && totalDuration > 0 && !isOccupied) {
+                                  hasConflict = validateTimetable(time, totalDuration, selectedDate) !== null
+                                }
+
+                                let isOverLimit = false
+
+                                if (selectedDate && totalDuration > 0) {
+                                  const [hour, minute] = time.split(':').map(Number)
+                                  const startTime = new Date(selectedDate)
+                                  startTime.setHours(hour, minute, 0, 0)
+                                  const endTime = addMinutes(startTime, totalDuration)
+                                  const endHour = endTime.getHours()
+                                  const endMinute = endTime.getMinutes()
+                                  const totalEndMinutes = endHour * 60 + endMinute
+
+                                  if (hour >= 9 && hour < 12) {
+                                    isOverLimit = totalEndMinutes > 12 * 60
+                                  } else if (hour >= 13 && hour < 18) {
+                                    isOverLimit = totalEndMinutes > 18 * 60
+                                  } else if (hour >= 19 && hour < 21) {
+                                    isOverLimit = totalEndMinutes > 21 * 60
+                                  }
+                                }
+
+                                return (
+                                  <SelectItem
+                                    key={time}
+                                    value={time}
+                                    disabled={isOccupied || hasConflict || isOverLimit}
+                                    className={isOccupied || hasConflict || isOverLimit ? 'hidden' : ''}
+                                  >
+                                    {time} {(isOccupied || hasConflict || isOverLimit) && "(indisponível)"}
+                                  </SelectItem>
+                                )
+                              })
                             }
-
-                            return (
-                              <SelectItem
-                                key={time}
-                                value={time}
-                                disabled={isOccupied || hasConflict}
-                                className={isOccupied || hasConflict ? 'hidden' : ''}
-                              >
-                                {time} {(isOccupied || hasConflict) && "(indisponível)"}
-                              </SelectItem>
-                            )
-                          })}
+                          })()}
                         </SelectContent>
                       </Select>
                     </FormControl>
