@@ -233,34 +233,32 @@ export const CalendarSection = ({
         </div>
       </div>
     ) : (
-      <div>
-        <div>
-          <CalendarHeader
-            selectedDate={selectedDate}
-            onDateChange={setSelectedDate}
-            onViewChange={setCurrentView}
-            currentView={currentView}
-            reportData={reportData}
-          />
+      <div className='pb-55 flex'>
+        <CalendarHeader
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+          onViewChange={setCurrentView}
+          currentView={currentView}
+          reportData={reportData}
+        />
 
-          <h1 className='text-center p-2 pt-5'>
-            AGENDA
-            {currentView === 'week' ? ' SEMANAL' : currentView === 'month' ? ' MENSAL' : ' ANUAL'}
-          </h1>
+        <h1 className='text-center p-2 pt-5'>
+          AGENDA
+          {currentView === 'week' ? ' SEMANAL' : currentView === 'month' ? ' MENSAL' : ' ANUAL'}
+        </h1>
 
-          <CalendarView
-            currentView={currentView}
-            events={allEvents}
-            view={currentView}
-            selectedDate={selectedDate}
-            onViewChange={setCurrentView}
-            onDateChange={setSelectedDate}
-            originalAppointments={parsedAppointments}
-            allServices={services}
-          />
-          <div className='mt-2'>
-            <ServiceSection services={formattedServices} />
-          </div>
+        <CalendarView
+          currentView={currentView}
+          events={allEvents}
+          view={currentView}
+          selectedDate={selectedDate}
+          onViewChange={setCurrentView}
+          onDateChange={setSelectedDate}
+          originalAppointments={parsedAppointments}
+          allServices={services}
+        />
+        <div className='mt-2 mb-5'>
+          <ServiceSection services={formattedServices} />
         </div>
       </div>
     )

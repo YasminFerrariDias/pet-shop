@@ -26,7 +26,7 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
   }))
 
   return (
-    <div className="bg-background-primary p-6" >
+    <div className="bg-background-primary p-6 pb-24 md:pb-6">
       <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto ml-auto">
         <div>
           <h1 className="text-title-size text-content-primary mb-2">
