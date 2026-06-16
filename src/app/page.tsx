@@ -1,8 +1,8 @@
 'use server'
 
-import { AppointmentForm } from "@/components/appointment-form/appointment-form";
-import { CalendarSection } from "@/components/calendar-section/calendar-section";
-import { ServiceForm } from "@/components/service-form/service-form";
+import { AppointmentForm } from "@/features/apointments/components/appointment-form/appointment-form";
+import { CalendarSection } from "@/components/calendar/calendar-section/calendar-section";
+import { ServiceForm } from "@/features/services/components/service-form/service-form";
 import { Button } from "@/components/ui/button";
 import { prisma } from '@/lib/prisma'
 
