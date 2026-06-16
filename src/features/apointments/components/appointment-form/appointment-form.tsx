@@ -9,52 +9,21 @@ import { useForm } from 'react-hook-form'
 import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
 import { Input } from "../../../../components/ui/input";
 import { IMaskInput } from "react-imask";
-import { startOfToday, format, setMinutes, setHours, addMinutes } from "date-fns";
+import { startOfToday, format, setMinutes, setHours } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../../../../components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select";
 import { toast } from "sonner";
-import { createAppointment, getAppointmentByDate, updateAppointment } from "@/app/actions-appointment";
+import { createAppointment, getAppointmentByDate, updateAppointment } from "@/features/apointments/services/actions-appointment";
 import { useEffect, useState } from "react";
 import { Appointment } from "@/features/apointments/types/appointment";
 import { TagSelector } from "../tag-selector";
 import { Service } from "@/features/services/types/service";
+import { AppointmentFormSchema } from "../../services/form-schema";
+import { validateBusinessHours, validateEndTime } from '@/features/apointments/services/date';
 
-const appointmentFormSchema = z.object({
-  tutorName: z.string().min(3, "O nome do tutor é obrigatório"),
-  petName: z.string().min(3, "O nome do pet é obrigatório"),
-  phone: z.string().min(11, "O telefone é obrigatório"),
-  servicesIds: z.array(z.string()).min(1, "Selecione pelo menos um serviço"),
-  scheduleAt: z.date({
-    error: 'A data é obrigatória'
-  }).min(1, 'Selecione uma data primeiro'),
-  time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
-    message: "Formato inválido. Use HH:mm (ex: 14:30)"
-  })
-}).refine((data) => {
-  const [hour, minute] = data.time.split(':')
-  const hourNum = Number(hour)
-
-  const isValidHour =
-    (hourNum >= 9 && hourNum < 12) ||
-    (hourNum >= 13 && hourNum < 18) ||
-    (hourNum >= 19 && hourNum < 21)
-
-  if (!isValidHour) return false
-
-  const scheduleDateTime = setMinutes(
-    setHours(data.scheduleAt, hourNum),
-    Number(minute)
-  )
-
-  return scheduleDateTime > new Date()
-}, {
-  path: ['time'],
-  error: 'Horário inválido. Por favor, selecione um horário futuro dentro do expediente de funcionamento'
-})
-
-type AppointFormValues = z.infer<typeof appointmentFormSchema>;
+type AppointFormValues = z.infer<typeof AppointmentFormSchema>;
 
 type AppointmentFormProps = {
   appointment?: Appointment;
@@ -69,7 +38,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
   const [errorMessage, setErrorMessage] = useState('')
 
   const form = useForm<AppointFormValues>({
-    resolver: zodResolver(appointmentFormSchema),
+    resolver: zodResolver(AppointmentFormSchema),
     defaultValues: {
       tutorName: '',
       petName: '',
@@ -111,67 +80,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     form.reset()
   }
 
-  const validateTimetable = (startTime: string, duration: number, selectedDate: Date): string | null => {
-    if (!selectedDate) {
-      return 'Selecione uma data primeiro'
-    }
 
-    const [hour, minute] = startTime.split(':').map(Number)
-
-    const referenceDate = new Date(selectedDate)
-    referenceDate.setHours(hour, minute, 0, 0)
-
-    const endTime = addMinutes(referenceDate, duration)
-
-    const endHour = endTime.getHours()
-
-    const isStartValid =
-      (hour >= 9 && hour < 12) ||
-      (hour >= 13 && hour < 18) ||
-      (hour >= 19 && hour < 21)
-
-    if (!isStartValid) {
-      return 'Horário de início inválido'
-    }
-
-    const isEndValid =
-      (endHour >= 9 && endHour < 12) ||
-      (endHour >= 13 && endHour < 18) ||
-      (endHour >= 19 && endHour < 21)
-
-    if (!isEndValid) {
-      return 'Horário de fim inválido'
-    }
-
-    const occupiedSlots = dayAppointments
-      .filter(apt => apt && apt.scheduleAt)
-      .map(apt => {
-        const totalDuration = (apt.servicesIds || []).reduce((sum, id) => {
-          const service = allServices?.find(s => s.id === id)
-          return sum + (service?.duration || 0)
-        }, 0)
-
-        const endTime = addMinutes(apt.scheduleAt, totalDuration)
-
-        return {
-          start: apt.scheduleAt,
-          end: endTime
-        }
-      })
-
-    const newStart = referenceDate
-    const newEnd = endTime
-
-    const hasConflict = occupiedSlots.some(slot => {
-      return newStart < slot.end && newEnd > slot.start
-    })
-
-    if (hasConflict) {
-      return 'Já existe um agendamento neste horário'
-    }
-
-    return null
-  }
 
   useEffect(() => {
     const servicesIds = form.watch('servicesIds')
@@ -381,12 +290,16 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                             return
                           }
 
-                          const erro = validateTimetable(selectedTime, totalDuration, selectedDate)
+                          const [hour, minute] = selectedTime.split(':').map(Number);
 
-                          if (erro) {
-                            setErrorMessage(erro)
+                          const scheduleAt = new Date(selectedDate);
+                          scheduleAt.setHours(hour, minute, 0, 0);
+
+                          const result = validateEndTime(scheduleAt, totalDuration);
+                          if (!result.valid) {
+                            setErrorMessage(result.error || 'Horário inválido');
                           } else {
-                            setErrorMessage('')
+                            setErrorMessage('');
                           }
                         }}
                       >
@@ -399,45 +312,32 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         </SelectTrigger>
                         <SelectContent>
                           {(() => {
+                            const now = new Date()
+                            const selectedDate = form.getValues('scheduleAt')
+
                             const availableTimes = TIME_OPTION.filter((time) => {
-                              const selectedDate = form.getValues('scheduleAt')
-                              const now = new Date()
                               const isToday = selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
 
-                              let isPastTime = false
                               if (isToday && selectedDate) {
                                 const [hour, minute] = time.split(':').map(Number)
                                 const optionDate = new Date(selectedDate)
                                 optionDate.setHours(hour, minute, 0, 0)
-                                isPastTime = optionDate < now
+                                if (optionDate < now) return false
                               }
-                              if (isPastTime) return false
 
                               const isOccupied = dayAppointments.some((apt) => format(apt.scheduleAt, 'HH:mm') === time)
                               if (isOccupied) return false
 
-                              let hasConflict = false
-                              if (selectedDate && totalDuration > 0 && !isOccupied) {
-                                hasConflict = validateTimetable(time, totalDuration, selectedDate) !== null
-                              }
-                              if (hasConflict) return false
-
-                              let isOverLimit = false
                               if (selectedDate && totalDuration > 0) {
                                 const [hour, minute] = time.split(':').map(Number)
-                                const startTime = new Date(selectedDate)
-                                startTime.setHours(hour, minute, 0, 0)
-                                const endTime = addMinutes(startTime, totalDuration)
-                                const endHour = endTime.getHours()
-                                const endMinute = endTime.getMinutes()
-                                const totalEndMinutes = endHour * 60 + endMinute
+                                const scheduleAt = new Date(selectedDate)
+                                scheduleAt.setHours(hour, minute, 0, 0)
+                                const result = validateEndTime(scheduleAt, totalDuration)
 
-                                if (hour >= 9 && hour < 12) isOverLimit = totalEndMinutes > 12 * 60
-                                else if (hour >= 13 && hour < 18) isOverLimit = totalEndMinutes > 18 * 60
-                                else if (hour >= 19 && hour < 21) isOverLimit = totalEndMinutes > 21 * 60
+                                if (!result.valid) return false
                               }
 
-                              return !isOverLimit
+                              return true
                             })
 
                             if (availableTimes.length === 0) {
@@ -446,67 +346,13 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                                   Nenhum horário disponível
                                 </div>
                               )
-                            } else {
-                              return TIME_OPTION.map((time) => {
-                                const selectedDate = form.getValues('scheduleAt')
-
-                                const now = new Date()
-
-                                const isToday = selectedDate &&
-                                  format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
-
-                                let isPastTime = false
-                                if (isToday && selectedDate) {
-                                  const [hour, minute] = time.split(':').map(Number)
-                                  const optionDate = new Date(selectedDate)
-                                  optionDate.setHours(hour, minute, 0, 0)
-                                  isPastTime = optionDate < now
-                                }
-
-                                if (isPastTime) return null
-
-                                const isOccupied = dayAppointments.some((apt) => {
-                                  return format(apt.scheduleAt, 'HH:mm') === time
-                                })
-
-                                let hasConflict = false
-
-                                if (selectedDate && totalDuration > 0 && !isOccupied) {
-                                  hasConflict = validateTimetable(time, totalDuration, selectedDate) !== null
-                                }
-
-                                let isOverLimit = false
-
-                                if (selectedDate && totalDuration > 0) {
-                                  const [hour, minute] = time.split(':').map(Number)
-                                  const startTime = new Date(selectedDate)
-                                  startTime.setHours(hour, minute, 0, 0)
-                                  const endTime = addMinutes(startTime, totalDuration)
-                                  const endHour = endTime.getHours()
-                                  const endMinute = endTime.getMinutes()
-                                  const totalEndMinutes = endHour * 60 + endMinute
-
-                                  if (hour >= 9 && hour < 12) {
-                                    isOverLimit = totalEndMinutes > 12 * 60
-                                  } else if (hour >= 13 && hour < 18) {
-                                    isOverLimit = totalEndMinutes > 18 * 60
-                                  } else if (hour >= 19 && hour < 21) {
-                                    isOverLimit = totalEndMinutes > 21 * 60
-                                  }
-                                }
-
-                                return (
-                                  <SelectItem
-                                    key={time}
-                                    value={time}
-                                    disabled={isOccupied || hasConflict || isOverLimit}
-                                    className={isOccupied || hasConflict || isOverLimit ? 'hidden' : ''}
-                                  >
-                                    {time} {(isOccupied || hasConflict || isOverLimit) && "(indisponível)"}
-                                  </SelectItem>
-                                )
-                              })
                             }
+
+                            return availableTimes.map((time) => (
+                              <SelectItem key={time} value={time}>
+                                {time}
+                              </SelectItem>
+                            ))
                           })()}
                         </SelectContent>
                       </Select>
@@ -559,3 +405,4 @@ const TIME_OPTION = generateTimeOptions().filter((time) => {
   const hour = parseInt(time.split(':')[0])
   return (hour >= 9 && hour < 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour < 21)
 })
+

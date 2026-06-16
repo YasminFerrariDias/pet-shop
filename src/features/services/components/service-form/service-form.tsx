@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { DollarSign, Loader2, Timer, User } from "lucide-react";
 import { Input } from "../../../../components/ui/input";
 import { toast } from "sonner";
-import { createService, updateService } from "@/app/actions-service";
+import { createService, updateService } from "@/features/services/services/actions-service";
 import { useEffect, useState } from "react";
 import { Service } from "@/features/services/types/service";
 
