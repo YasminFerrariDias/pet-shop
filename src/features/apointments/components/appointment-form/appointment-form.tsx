@@ -14,10 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { TagSelector } from "../../../../components/tag-selector";
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { useAvailableTimes } from "../../hooks/useAvailableTimes";
-import { useEffect, useState } from "react";
 import { getAppointmentByDate } from "../../services/appointment-queries";
 import { useTimeSelection } from "../../hooks/useTimeSelection";
-import { AppointFormValues, AppointmentFormProps } from "../../types/appointment";
+import { AppointmentFormProps } from "../../types/appointment";
+import { useDateSync } from "../../hooks/useDateSync";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const {
@@ -31,23 +31,14 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     errorMessage,
     setErrorMessage,
   } = useAppointmentForm({ appointment, allServices })
+
   const { handleTimeChange } = useTimeSelection(
     form,
     totalDuration,
     setErrorMessage
   );
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(form.getValues('scheduleAt'))
-
-  useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === 'scheduleAt' || name === undefined) {
-        setSelectedDate(value.scheduleAt)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [form])
+  const { selectedDate } = useDateSync(form)
 
   const { availableTimes } = useAvailableTimes({
     selectedDate,
