@@ -2,116 +2,33 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form'
 import { CalendarIcon, ChevronDownIcon, Clock, Dog, Loader2, Phone, User } from "lucide-react";
 import { Input } from "../../../../components/ui/input";
 import { IMaskInput } from "react-imask";
-import { startOfToday, format, setMinutes, setHours } from "date-fns";
+import { startOfToday, format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../../../../components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select";
-import { toast } from "sonner";
-import { createAppointment, getAppointmentByDate, updateAppointment } from "@/features/apointments/services/actions-appointment";
-import { useEffect, useState } from "react";
-import { Appointment } from "@/features/apointments/types/appointment";
+import { getAppointmentByDate } from "@/features/apointments/services/actions-appointment";
 import { TagSelector } from "../tag-selector";
-import { Service } from "@/features/services/types/service";
-import { AppointmentFormSchema } from "../../services/form-schema";
 import { validateEndTime } from '@/features/apointments/services/date';
-
-type AppointFormValues = z.infer<typeof AppointmentFormSchema>;
-
-type AppointmentFormProps = {
-  appointment?: Appointment;
-  children?: React.ReactNode;
-  allServices?: Service[];
-}
+import { useAppointmentForm } from "../../hooks/useAppointmentForm";
+import { AppointmentFormProps } from "../../types/appointment-props";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [totalDuration, setTotalDuration] = useState(0)
-  const [dayAppointments, setDayAppointments] = useState<Appointment[]>([])
-  const [errorMessage, setErrorMessage] = useState('')
-
-  const form = useForm<AppointFormValues>({
-    resolver: zodResolver(AppointmentFormSchema),
-    defaultValues: {
-      tutorName: '',
-      petName: '',
-      phone: '',
-      servicesIds: [],
-      scheduleAt: undefined,
-      time: ''
-    }
-  })
-
-  const onSubmit = async (data: AppointFormValues) => {
-    const [hour, minute] = data.time.split(':')
-
-    const scheduleAt = setMinutes( // etapa 2 - ajusta o minuto
-      setHours(data.scheduleAt, Number(hour)), // etapa 1 - ajusta a hora
-      Number(minute)
-    )
-
-    const isEdit = !!appointment?.id;
-
-    const result = isEdit
-      ? await updateAppointment(appointment.id, {
-        ...data,
-        scheduleAt,
-      })
-      : await createAppointment({
-        ...data,
-        scheduleAt
-      })
-
-    if ('error' in result) {
-      toast.error(result.error)
-      return
-    }
-
-    toast.success(`Agendamento ${isEdit ? "atualizado" : "criado"} com sucesso!`)
-
-    setIsOpen(false)
-    form.reset()
-  }
-
-  useEffect(() => {
-    const servicesIds = form.watch('servicesIds')
-
-    const total = servicesIds.reduce((sum, id) => {
-      const service = allServices?.find(s => s.id === id)
-      return sum + (service?.duration || 0)
-    }, 0)
-
-    setTotalDuration(total)
-  }, [form.watch('servicesIds'), allServices])
-
-  useEffect(() => {
-    if (appointment) {
-      form.reset({
-        tutorName: appointment.tutorName,
-        petName: appointment.petName,
-        phone: appointment.phone,
-        servicesIds: appointment.servicesIds || [],
-        scheduleAt: appointment.scheduleAt,
-        time: format(appointment.scheduleAt, "HH:mm"),
-      })
-    } else {
-      form.reset({
-        tutorName: '',
-        petName: '',
-        phone: '',
-        servicesIds: [],
-        scheduleAt: undefined,
-        time: '',
-      })
-    }
-  }, [appointment, form])
+  const {
+    form,
+    isOpen,
+    setIsOpen,
+    onSubmit,
+    totalDuration,
+    dayAppointments,
+    setDayAppointments,
+    errorMessage,
+    setErrorMessage,
+  } = useAppointmentForm({ appointment, allServices })
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -403,4 +320,3 @@ const TIME_OPTION = generateTimeOptions().filter((time) => {
   const hour = parseInt(time.split(':')[0])
   return (hour >= 9 && hour < 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour < 21)
 })
-
