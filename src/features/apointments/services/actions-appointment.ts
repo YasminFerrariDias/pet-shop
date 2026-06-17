@@ -8,6 +8,34 @@ import { checkAvailability } from './date-server';
 import { appointmentSchema } from './appointment-schema';
 import { AppointmentData } from '../types/appointment';
 import { appointmentExist } from './appointment-schema.server';
+import { AppointmentFormSchema } from './form-schema';
+
+// CRIAÇÃO DO AGENDAMENTO
+export async function createAppointment(data: AppointmentData) {
+  try {
+    const parsedData = AppointmentFormSchema.parse(data);
+
+    const validation = validateBusinessHours(parsedData.scheduleAt);
+    if (!validation.valid) return validation;
+
+    const conflict = await checkAvailability(
+      parsedData.scheduleAt,
+      parsedData.servicesIds
+    );
+    if (!conflict.valid) return conflict;
+
+    await prisma?.appointment.create({
+      data: {
+        ...parsedData,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Erro ao criar agendamento: ', error);
+    return { error: 'Erro ao criar o agendamento' };
+  }
+}
 
 // ATUALIZAÇÃO DO AGENDAMENTO
 export async function updateAppointment(id: string, data: AppointmentData) {
@@ -59,23 +87,4 @@ export async function deleteAppointment(id: string) {
       error: 'Erro ao remover agendamento. Tente novamente',
     };
   }
-}
-
-export async function getAppointmentByDate(date: Date) {
-  const start = startOfDay(date);
-  const end = endOfDay(date);
-
-  const appointments = await prisma.appointment.findMany({
-    where: {
-      scheduleAt: {
-        gte: start,
-        lte: end,
-      },
-    },
-    orderBy: {
-      scheduleAt: 'asc',
-    },
-  });
-
-  return appointments;
 }

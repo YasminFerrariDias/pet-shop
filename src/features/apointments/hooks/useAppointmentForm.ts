@@ -4,11 +4,13 @@ import { useForm } from 'react-hook-form';
 import { AppointmentFormSchema } from '../services/form-schema';
 import { Appointment } from '../types/appointment';
 import { format, setHours, setMinutes } from 'date-fns';
-import { updateAppointment } from '../services/actions-appointment';
+import {
+  createAppointment,
+  updateAppointment,
+} from '../services/actions-appointment';
 import { toast } from 'sonner';
 import z from 'zod';
 import { AppointmentFormProps } from '../types/appointment-props';
-import { createAppointment } from '../services/appointment-queries';
 
 type AppointFormValues = z.infer<typeof AppointmentFormSchema>;
 
