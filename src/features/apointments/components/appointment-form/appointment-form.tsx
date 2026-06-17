@@ -45,6 +45,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     totalDuration,
     dayAppointments,
   })
+  console.log(totalDuration)
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -143,7 +144,15 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                     <TagSelector
                       allServices={allServices}
                       selectedIds={field.value}
-                      onChange={field.onChange}
+                      onChange={(ids) => {
+                        console.log('📋 onChange chamado com:', ids);
+
+                        // ✅ USAR field.onChange
+                        field.onChange(ids);
+
+                        console.log('📋 field.value após onChange:', field.value);
+                        console.log('📋 form.getValues após onChange:', form.getValues('servicesIds'));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

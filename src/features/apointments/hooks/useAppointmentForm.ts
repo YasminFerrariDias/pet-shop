@@ -75,6 +75,7 @@ export function useAppointmentForm({
 
   return {
     form,
+    allServices,
     isOpen,
     setIsOpen,
     onSubmit,

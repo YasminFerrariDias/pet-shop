@@ -1,5 +1,6 @@
+// useTotalDuration.ts
 import { useEffect, useState } from 'react';
-import { AppointFormValues, AppointmentFormProps } from '../types/appointment';
+import { AppointFormValues } from '../types/appointment';
 import { Service } from '@/features/services/types/service';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -13,15 +14,24 @@ export function useTotalDuration({
   const [totalDuration, setTotalDuration] = useState(0);
 
   useEffect(() => {
-    const servicesIds = form.watch('servicesIds');
+    const subscription = form.watch((value) => {
+      const servicesIds = value.servicesIds;
 
-    const total = servicesIds.reduce((sum: number, id: string) => {
-      const service = allServices?.find((s) => s.id === id);
-      return sum + (service?.duration || 0);
-    }, 0);
+      if (!servicesIds || servicesIds.length === 0) {
+        setTotalDuration(0);
+        return;
+      }
 
-    setTotalDuration(total);
-  }, [form, allServices]);
+      const total = servicesIds.reduce((sum: number, id: string) => {
+        const service = allServices?.find((s) => s.id === id);
+        return sum + (service?.duration || 0);
+      }, 0);
+
+      setTotalDuration(total);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [allServices]);
 
   return { totalDuration };
 }
