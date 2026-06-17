@@ -1,12 +1,4 @@
 import { addMinutes } from "date-fns"
-import { prisma } from '@/lib/prisma';
-
-// Horário de atendimento
-const OPENING_HOURS = {
-  morning: { start: 9, end: 12 },
-  afternoon: { start: 13, end: 18 },
-  evening: { start: 19, end: 21 }
-} as const
 
 const PERIOD_LIMIT = {
   morning: 12 * 60,
@@ -27,27 +19,6 @@ export function isTimeInRange(hours: number, minutes: number): boolean {
   return periods.some(period =>
     totalMinutes >= period.start && totalMinutes < period.end
   )
-}
-
-// O horário de duração
-export async function getServiceDuration(serviceIds: string[]) {
-  if (!serviceIds || serviceIds.length === 0) {
-    return 0;
-  }
-
-  const services = await prisma.service.findMany({
-    where: {
-      id: {
-        in: serviceIds,
-      },
-    },
-  });
-
-  const totalDuration = services.reduce((sum, service) => {
-    return (sum = sum + service.duration);
-  }, 0);
-
-  return totalDuration
 }
 
 // Horário de encerramento

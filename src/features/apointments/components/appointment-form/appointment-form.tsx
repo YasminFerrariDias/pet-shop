@@ -21,7 +21,7 @@ import { Appointment } from "@/features/apointments/types/appointment";
 import { TagSelector } from "../tag-selector";
 import { Service } from "@/features/services/types/service";
 import { AppointmentFormSchema } from "../../services/form-schema";
-import { validateBusinessHours, validateEndTime } from '@/features/apointments/services/date';
+import { validateEndTime } from '@/features/apointments/services/date';
 
 type AppointFormValues = z.infer<typeof AppointmentFormSchema>;
 
@@ -79,8 +79,6 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     setIsOpen(false)
     form.reset()
   }
-
-
 
   useEffect(() => {
     const servicesIds = form.watch('servicesIds')

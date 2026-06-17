@@ -2,11 +2,28 @@
 
 import { addMinutes, endOfDay, startOfDay } from 'date-fns';
 import { prisma } from '@/lib/prisma';
-import {
-  getServiceDuration,
-  validateBusinessHours,
-  validateEndTime,
-} from './date';
+import { validateBusinessHours, validateEndTime } from './date';
+
+// O horário de duração
+export async function getServiceDuration(serviceIds: string[]) {
+  if (!serviceIds || serviceIds.length === 0) {
+    return 0;
+  }
+
+  const services = await prisma.service.findMany({
+    where: {
+      id: {
+        in: serviceIds,
+      },
+    },
+  });
+
+  const totalDuration = services.reduce((sum, service) => {
+    return (sum = sum + service.duration);
+  }, 0);
+
+  return totalDuration;
+}
 
 export async function checkAvailability(
   scheduleAt: Date,
