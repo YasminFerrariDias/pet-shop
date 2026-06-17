@@ -253,6 +253,9 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         >
                           <Clock className="h-4 w-4 text-content-brand" />
                           <SelectValue placeholder="--:-- --" />
+                          {field.value && !availableTimes.includes(field.value)
+                            ? `${field.value} (indisponivel)`
+                            : field.value}
                         </SelectTrigger>
                         <SelectContent>
                           {availableTimes.length === 0 ? (
