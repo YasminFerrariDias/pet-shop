@@ -4,26 +4,12 @@ import { AppointmentForm } from "@/features/apointments/components/appointment-f
 import { CalendarSection } from "@/components/calendar/calendar-section/calendar-section";
 import { ServiceForm } from "@/features/services/components/service-form/service-form";
 import { Button } from "@/components/ui/button";
-import { prisma } from '@/lib/prisma'
+import { getServices } from "@/features/services/services/service-queries";
+import { getAppointments } from "@/features/apointments/services/appointment-queries";
 
 export default async function Home({ }: { searchParams: Promise<{ date?: string }> }) {
-  const appointments = await prisma.appointment.findMany({
-    orderBy: {
-      scheduleAt: 'asc'
-    }
-  });
-
-  const services = await prisma.service.findMany({
-    orderBy: {
-      serviceName: 'asc'
-    }
-  })
-
-  const formattedServices = services.map(service => ({
-    ...service,
-    duration: service.duration,
-    price: service.price,
-  }))
+  const appointments = await getAppointments()
+  const services = await getServices()
 
   return (
     <div className="bg-background-primary p-6 pb-24 md:pb-6">
@@ -54,7 +40,7 @@ export default async function Home({ }: { searchParams: Promise<{ date?: string 
           </Button>
         </ServiceForm>
 
-        <AppointmentForm allServices={formattedServices}>
+        <AppointmentForm allServices={services}>
           <Button
             variant="brand"
             disabled={services.length === 0}

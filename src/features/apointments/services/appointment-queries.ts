@@ -31,12 +31,8 @@ export async function getAppointmentByDate(date: Date) {
   return appointments;
 }
 
-export async function getAllServices() {
-  const service = await prisma.service.findMany({
-    orderBy: {
-      serviceName: 'asc',
-    },
+export async function getAppointments() {
+  return await prisma.appointment.findMany({
+    orderBy: { scheduleAt: 'asc' },
   });
-
-  return service;
 }
