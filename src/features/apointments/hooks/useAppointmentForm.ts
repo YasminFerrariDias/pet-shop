@@ -1,12 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   AppointFormValues,
   Appointment,
   AppointmentFormProps,
 } from '../types/appointment';
-import { format, setHours, setMinutes } from 'date-fns';
+import { setHours, setMinutes } from 'date-fns';
 import {
   createAppointment,
   updateAppointment,
@@ -14,6 +14,7 @@ import {
 import { toast } from 'sonner';
 import { AppointmentFormSchema } from '../services/appointment-schema';
 import { useTotalDuration } from './useTotalDuration';
+import { useFormReset } from './useFormReset';
 
 export function useAppointmentForm({
   appointment,
@@ -70,27 +71,7 @@ export function useAppointmentForm({
     form.reset();
   };
 
-  useEffect(() => {
-    if (appointment) {
-      form.reset({
-        tutorName: appointment.tutorName,
-        petName: appointment.petName,
-        phone: appointment.phone,
-        servicesIds: appointment.servicesIds || [],
-        scheduleAt: appointment.scheduleAt,
-        time: format(appointment.scheduleAt, 'HH:mm'),
-      });
-    } else {
-      form.reset({
-        tutorName: '',
-        petName: '',
-        phone: '',
-        servicesIds: [],
-        scheduleAt: undefined,
-        time: '',
-      });
-    }
-  }, [appointment, form]);
+  useFormReset({ form, appointment });
 
   return {
     form,
