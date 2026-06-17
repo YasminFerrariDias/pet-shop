@@ -5,14 +5,14 @@ import {
   AppointFormValues,
   Appointment,
   AppointmentFormProps,
-} from '../types/appointment';
+} from '../types/appointment.type';
 import { setHours, setMinutes } from 'date-fns';
 import {
   createAppointment,
   updateAppointment,
 } from '../services/appointment-mutations';
 import { toast } from 'sonner';
-import { AppointmentFormSchema } from '../services/appointment-schema';
+import { AppointmentFormSchema } from '../types/appointment.schema';
 import { useTotalDuration } from './useTotalDuration';
 import { useFormReset } from './useFormReset';
 

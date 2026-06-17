@@ -1,9 +1,6 @@
 import z from 'zod';
-import {
-  AppointmentFormSchema,
-  appointmentSchema,
-} from '../services/appointment-schema';
-import { Service } from '@/features/services/types/service';
+import { AppointmentFormSchema, appointmentSchema } from './appointment.schema';
+import { Service } from '@/features/services/types/service.type';
 
 export type AppointmentPeriodDay = 'morning' | 'afternoon' | 'evening';
 

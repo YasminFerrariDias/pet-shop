@@ -3,8 +3,8 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { CalendarCard } from '../calendar-card'
-import { Appointment } from '@/features/apointments/types/appointment'
-import { Service } from '@/features/services/types/service'
+import { Appointment } from '@/features/apointments/types/appointment.type'
+import { Service } from '@/features/services/types/service.type'
 
 const locales = {
   'pt-BR': ptBR

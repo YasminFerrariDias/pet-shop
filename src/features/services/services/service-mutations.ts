@@ -2,9 +2,9 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { serviceSchema } from './service-schema';
-import { ServiceData } from '../types/service';
+import { ServiceData } from '../types/service.type';
 import { existenceQuery, serviceExist } from './service-existence';
+import { serviceSchema } from '../types/service.schema';
 
 // CRIAÇÃO DO AGENDAMENTO
 export async function createService(data: ServiceData) {

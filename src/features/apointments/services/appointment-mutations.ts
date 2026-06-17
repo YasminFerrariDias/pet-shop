@@ -4,13 +4,17 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { validateBusinessHours } from './appointment-date';
 import { checkAvailability } from './appointment-date-server';
-import { AppointmentFormSchema, appointmentSchema } from './appointment-schema';
-import { AppointmentData } from '../types/appointment';
+import {
+  AppointmentFormSchema,
+  appointmentSchema,
+} from '../types/appointment.schema';
+import { AppointmentData } from '../types/appointment.type';
 import { appointmentExist } from './appointment-queries';
 
 // CRIAÇÃO DO AGENDAMENTO
 export async function createAppointment(data: AppointmentData) {
   try {
+    console.log(data);
     const parsedData = AppointmentFormSchema.parse(data);
 
     const validation = validateBusinessHours(parsedData.scheduleAt);
@@ -21,10 +25,10 @@ export async function createAppointment(data: AppointmentData) {
       parsedData.servicesIds
     );
     if (!conflict.valid) return conflict;
-
+    const { time, ...rest } = parsedData;
     await prisma?.appointment.create({
       data: {
-        ...parsedData,
+        ...rest,
       },
     });
 

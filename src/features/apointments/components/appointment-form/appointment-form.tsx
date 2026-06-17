@@ -11,12 +11,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/
 import { cn } from "@/lib/utils";
 import { Calendar } from "../../../../components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select";
-import { TagSelector } from "../../../../components/tag-selector";
+import { TagSelector } from "../../../services/components/tag-selector";
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { useAvailableTimes } from "../../hooks/useAvailableTimes";
 import { getAppointmentByDate } from "../../services/appointment-queries";
 import { useTimeSelection } from "../../hooks/useTimeSelection";
-import { AppointmentFormProps } from "../../types/appointment";
+import { AppointmentFormProps } from "../../types/appointment.type";
 import { useDateSync } from "../../hooks/useDateSync";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {

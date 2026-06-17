@@ -5,7 +5,7 @@ import { ServiceForm } from "../service-form/service-form"
 import { Button } from "../../../../components/ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../../../components/ui/alert-dialog"
 import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "lucide-react"
-import { Service } from "@/features/services/types/service"
+import { Service } from "@/features/services/types/service.type"
 import { formatDuration } from "@/utils/formatDuration-utils"
 import { useServiceActions } from "../../hooks/useServiceActions"
 

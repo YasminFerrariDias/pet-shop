@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { serviceFormSchema } from '../services/service-schema';
 import { createService, updateService } from '../services/service-mutations';
 import { toast } from 'sonner';
 import z from 'zod';
-import { ServiceFormProps } from '../types/service';
+import { ServiceFormProps } from '../types/service.type';
+import { serviceFormSchema } from '../types/service.schema';
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 

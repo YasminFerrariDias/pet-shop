@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { DollarSign, Loader2, Timer, User } from "lucide-react";
 import { Input } from "../../../../components/ui/input";
-import { ServiceFormProps } from "@/features/services/types/service";
+import { ServiceFormProps } from "@/features/services/types/service.type";
 import { useServiceForm } from "../../hooks/useServiceForm";
 
 export const ServiceForm = ({ service, children }: ServiceFormProps) => {

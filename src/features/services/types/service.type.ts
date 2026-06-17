@@ -1,5 +1,5 @@
 import z from 'zod';
-import { serviceSchema } from '../services/service-schema';
+import { serviceSchema } from './service.schema';
 
 export type ServiceData = z.infer<typeof serviceSchema>;
 

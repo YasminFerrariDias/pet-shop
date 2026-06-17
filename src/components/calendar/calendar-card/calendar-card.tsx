@@ -6,8 +6,8 @@ import { deleteAppointment } from "@/features/apointments/services/appointment-m
 import { useState } from "react"
 import { toast } from "sonner"
 import { AppointmentForm } from "../../../features/apointments/components/appointment-form/appointment-form"
-import { Appointment } from "@/features/apointments/types/appointment"
-import { Service } from "@/features/services/types/service"
+import { Appointment } from "@/features/apointments/types/appointment.type"
+import { Service } from "@/features/services/types/service.type"
 
 type CalendarCardProps = {
   event: CalendarEvent

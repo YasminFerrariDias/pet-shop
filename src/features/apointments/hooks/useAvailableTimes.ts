@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { validateEndTime } from '../services/appointment-date';
-import { Appointment } from '../types/appointment';
+import { Appointment } from '../types/appointment.type';
 import { useEffect, useState } from 'react';
 import { TIME_OPTION } from '@/utils/time-option';
 

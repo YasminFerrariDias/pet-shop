@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { AppointFormValues } from '../types/appointment';
+import { AppointFormValues } from '../types/appointment.type';
 
 export function useDateSync(form: UseFormReturn<AppointFormValues>) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(

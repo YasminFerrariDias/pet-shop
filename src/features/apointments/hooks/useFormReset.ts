@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { AppointFormValues, Appointment } from '../types/appointment';
+import { AppointFormValues, Appointment } from '../types/appointment.type';
 import { format } from 'date-fns';
 
 export function useFormReset({

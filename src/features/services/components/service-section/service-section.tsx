@@ -1,4 +1,4 @@
-import { Service } from "@/features/services/types/service";
+import { Service } from "@/features/services/types/service.type";
 import { ServiceCard } from "../service-card";
 
 type ServiceSectionProps = {

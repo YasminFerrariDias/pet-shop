@@ -1,5 +1,5 @@
-import { Service } from "@/features/services/types/service";
-import { Tag } from "../tag/tag"
+import { Service } from "@/features/services/types/service.type";
+import { Tag } from "../../../../components/tag/tag"
 
 type TagSelectorProps = {
   allServices?: Service[];

@@ -1,7 +1,7 @@
 // useTotalDuration.ts
 import { useEffect, useState } from 'react';
-import { AppointFormValues } from '../types/appointment';
-import { Service } from '@/features/services/types/service';
+import { AppointFormValues } from '../types/appointment.type';
+import { Service } from '@/features/services/types/service.type';
 import { UseFormReturn } from 'react-hook-form';
 
 export function useTotalDuration({
