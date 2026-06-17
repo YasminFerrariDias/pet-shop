@@ -5,11 +5,9 @@ import { ServiceForm } from "../service-form/service-form"
 import { Button } from "../../../../components/ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../../../components/ui/alert-dialog"
 import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "lucide-react"
-import { useState } from "react"
-import { deleteService } from "@/features/services/services/actions-service"
-import { toast } from "sonner"
 import { Service } from "@/features/services/types/service"
 import { formatDuration } from "@/utils/formatDuration-utils"
+import { useServiceActions } from "../hooks/useServiceActions"
 
 type ServiceCardProps = {
   service: Service
@@ -17,22 +15,7 @@ type ServiceCardProps = {
 }
 
 export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardProps) => {
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  const handleDelete = async () => {
-    setIsDeleting(true)
-
-    const result = await deleteService(service.id)
-
-    if (result?.error) {
-      toast.error(result.error)
-      setIsDeleting(false)
-      return
-    }
-
-    toast.success('Serviço removido com sucesso!')
-    setIsDeleting(false)
-  }
+  const { handleDelete, isDeleting } = useServiceActions()
 
   return (
     <div
@@ -90,7 +73,7 @@ export const ServiceCard = ({ service, isFirstInSection = false }: ServiceCardPr
                   Cancelar
                 </AlertDialogCancel>
 
-                <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+                <AlertDialogAction onClick={() => handleDelete(service.id)} disabled={isDeleting}>
                   {isDeleting && (
                     <LoadingIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
