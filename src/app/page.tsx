@@ -1,70 +1,19 @@
 'use server'
 
-import { AppointmentForm } from "@/components/appointment-form/appointment-form";
-import { DatePicker } from "@/components/date-picker";
-import { PeriodSection } from "@/components/period-section";
-import { ReportSection } from "@/components/report-section";
-import { ServiceForm } from "@/components/service-form/service-form";
-import { ServiceSection } from "@/components/service-section";
+import { AppointmentForm } from "@/features/apointments/components/appointment-form/appointment-form";
+import { CalendarSection } from "@/components/calendar/calendar-section/calendar-section";
+import { ServiceForm } from "@/features/services/components/service-form/service-form";
 import { Button } from "@/components/ui/button";
-import { prisma } from '@/lib/prisma'
-import { ReportItem } from "@/types/report";
-import { groupAppointmentByPeriod } from "@/utils";
-import { endOfDay, isValid, parseISO, startOfDay } from "date-fns";
+import { getServices } from "@/features/services/services/service-queries";
+import { getAppointments } from "@/features/apointments/services/appointment-queries";
 
-export default async function Home({
-  searchParams
-}: {
-  searchParams: Promise<{ date?: string }>
-}) {
-  const { date } = await searchParams
-  const parsedDate = date ? parseISO(date) : new Date()
-  const selectedDate = isValid(parsedDate) ? parsedDate : new Date()
-
-  const appointments = await prisma.appointment.findMany({
-    where: {
-      scheduleAt: {
-        gte: startOfDay(selectedDate),
-        lte: endOfDay(selectedDate)
-      }
-    },
-    orderBy: {
-      scheduleAt: 'asc'
-    }
-  });
-
-  const services = await prisma.service.findMany({
-    orderBy: {
-      serviceName: 'asc'
-    }
-  })
-
-  const formattedServices = services.map(service => ({
-    ...service,
-    duration: service.duration,
-    price: service.price,
-  }))
-
-  const servicesWithReport: ReportItem[] = formattedServices.map(service => {
-    const amount = appointments.filter(apt =>
-      apt.servicesIds?.includes(service.id)
-    ).length
-
-    return {
-      id: service.id,
-      serviceName: service.serviceName,
-      price: service.price,
-      duration: service.duration,
-      amount: amount,
-      totalRevenue: service.price * amount
-    }
-  })
-
-  const periods = groupAppointmentByPeriod(appointments)
+export default async function Home({ }: { searchParams: Promise<{ date?: string }> }) {
+  const appointments = await getAppointments()
+  const services = await getServices()
 
   return (
-    <div className="bg-background-primary p-6">
-      <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto">
+    <div className="bg-background-primary p-6 pb-24 md:pb-6">
+      <div className="flex items-center justify-between mb-8 gap-4 max-w-3xl mx-auto ml-auto">
         <div>
           <h1 className="text-title-size text-content-primary mb-2">
             Sua Agenda
@@ -73,26 +22,14 @@ export default async function Home({
             Aqui você pode ver todos os clientes e serviços agendados para hoje
           </p>
         </div>
-
-        <div className="hidden md:flex items-center gap-4">
-          <DatePicker />
-        </div>
-      </div>
-
-      <div className="mt-3 mb-8 md:hidden">
-        <DatePicker />
       </div>
 
       <div className="flex flex-col md:flex-row gap-5 md:max-w-5xl mx-auto">
         <div className="flex-1">
-          {periods.map((period) => (
-            <PeriodSection period={period} key={period.type} allServices={services} />
-          ))}
-        </div>
-
-        <div className="md:w-90 shrink-0 mb-20">
-          <ServiceSection services={formattedServices} />
-          <ReportSection report={servicesWithReport} />
+          <CalendarSection
+            allAppointments={appointments}
+            services={services}
+          />
         </div>
       </div>
 
@@ -103,7 +40,7 @@ export default async function Home({
           </Button>
         </ServiceForm>
 
-        <AppointmentForm allServices={formattedServices}>
+        <AppointmentForm allServices={services}>
           <Button
             variant="brand"
             disabled={services.length === 0}
