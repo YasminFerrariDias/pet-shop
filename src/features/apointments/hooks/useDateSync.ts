@@ -8,13 +8,6 @@ export function useDateSync(form: UseFormReturn<AppointFormValues>) {
   );
 
   useEffect(() => {
-    const date = form.getValues('scheduleAt');
-    if (date !== selectedDate) {
-      setSelectedDate(date);
-    }
-  }, [form, selectedDate]);
-
-  useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'scheduleAt' || name === undefined) {
         setSelectedDate(value.scheduleAt);

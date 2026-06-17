@@ -1,4 +1,4 @@
-import { ReportCard } from "../../../components/calendar/report-card";
+import { ReportCard } from "../../components/calendar/report-card";
 import { ReportItem } from "@/features/reports/types/report";
 
 type ReportSectionProps = {

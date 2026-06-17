@@ -2,7 +2,7 @@
 
 import { addDays, addMonths, addYears, endOfWeek, format, startOfWeek, startOfYear, subDays, subMonths, subYears } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { ReportSection } from "../../../features/reports/report-section"
+import { ReportSection } from "../../../features/reports"
 import { ReportItem } from "@/features/reports/types/report"
 
 type CalendarHeaderProps = {
