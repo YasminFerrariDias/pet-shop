@@ -1,42 +1,10 @@
 'use server';
 
-import z from 'zod';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-
-const serviceSchema = z.object({
-  serviceName: z.string(),
-  duration: z.number(),
-  price: z.number().min(0),
-});
-
-type ServiceData = z.infer<typeof serviceSchema>;
-
-// VALIDAÇÃO SE EXISTE SERVIÇO
-export async function serviceExist(id: string) {
-  const service = await prisma.service.findUnique({
-    where: { id },
-  });
-
-  return service !== null;
-}
-
-// VALIDAÇÃO SE EXISTE ALGUM COMO MESMO NOME
-export async function existenceQuery(serviceName: string) {
-  const existingService = await prisma?.service.findFirst({
-    where: {
-      serviceName,
-    },
-  });
-
-  if (existingService) {
-    return {
-      error: 'Já existe um serviço com este nome!',
-    };
-  }
-
-  return true;
-}
+import { serviceSchema } from './service-schema';
+import { ServiceData } from '../types/service';
+import { existenceQuery, serviceExist } from './service-existence';
 
 // CRIAÇÃO DO AGENDAMENTO
 export async function createService(data: ServiceData) {

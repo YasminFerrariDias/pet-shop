@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { deleteService } from '../services/actions-service';
+import { deleteService } from '../services/service-mutations';
 import { toast } from 'sonner';
 
 export function useServiceActions() {

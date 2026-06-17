@@ -1,5 +1,11 @@
 import z from 'zod';
 
+export const serviceSchema = z.object({
+  serviceName: z.string(),
+  duration: z.number(),
+  price: z.number().min(0),
+});
+
 export const serviceFormSchema = z.object({
   serviceName: z.string().min(3, 'O nome do serviço é obrigatório'),
   duration: z
