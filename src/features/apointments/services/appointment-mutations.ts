@@ -14,7 +14,6 @@ import { appointmentExist } from './appointment-queries';
 // CRIAÇÃO DO AGENDAMENTO
 export async function createAppointment(data: AppointmentData) {
   try {
-    console.log(data);
     const parsedData = AppointmentFormSchema.parse(data);
 
     const validation = validateBusinessHours(parsedData.scheduleAt);
@@ -25,11 +24,11 @@ export async function createAppointment(data: AppointmentData) {
       parsedData.servicesIds
     );
     if (!conflict.valid) return conflict;
-    const { time, ...rest } = parsedData;
-    await prisma?.appointment.create({
-      data: {
-        ...rest,
-      },
+
+    const { time, ...dataToSave } = parsedData;
+
+    await prisma.appointment.create({
+      data: dataToSave,
     });
 
     return { success: true };
