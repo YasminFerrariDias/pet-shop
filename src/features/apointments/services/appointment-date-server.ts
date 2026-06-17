@@ -2,7 +2,7 @@
 
 import { addMinutes, endOfDay, startOfDay } from 'date-fns';
 import { prisma } from '@/lib/prisma';
-import { validateBusinessHours, validateEndTime } from './date';
+import { validateBusinessHours, validateEndTime } from './appointment-date';
 
 // O horário de duração
 export async function getServiceDuration(serviceIds: string[]) {

@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { validateEndTime } from '../services/date';
+import { validateEndTime } from '../services/appointment-date';
 import { Appointment } from '../types/appointment';
 import { useEffect, useState } from 'react';
 import { TIME_OPTION } from '@/utils/time-option';

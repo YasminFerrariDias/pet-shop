@@ -1,5 +1,5 @@
 import { UseFormReturn } from 'react-hook-form';
-import { validateEndTime } from '../services/date';
+import { validateEndTime } from '../services/appointment-date';
 import { AppointFormValues } from '../types/appointment';
 
 export function useTimeSelection(

@@ -1,6 +1,9 @@
 import z from 'zod';
-import { appointmentSchema } from '../services/appointment-schema';
-import { AppointmentFormSchema } from '../services/form-schema';
+import {
+  AppointmentFormSchema,
+  appointmentSchema,
+} from '../services/appointment-schema';
+import { Service } from '@/features/services/types/service';
 
 export type AppointmentPeriodDay = 'morning' | 'afternoon' | 'evening';
 
@@ -23,4 +26,10 @@ export type AppointmentPeriod = {
   type: AppointmentPeriodDay;
   timeRange: string;
   appointments: Appointment[];
+};
+
+export type AppointmentFormProps = {
+  appointment?: Appointment;
+  children?: React.ReactNode;
+  allServices?: Service[];
 };

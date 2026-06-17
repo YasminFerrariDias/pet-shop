@@ -11,14 +11,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/
 import { cn } from "@/lib/utils";
 import { Calendar } from "../../../../components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select";
-import { TagSelector } from "../tag-selector";
-import { validateEndTime } from '@/features/apointments/services/date';
+import { TagSelector } from "../../../../components/tag-selector";
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
-import { AppointmentFormProps } from "../../types/appointment-props";
 import { useAvailableTimes } from "../../hooks/useAvailableTimes";
 import { useEffect, useState } from "react";
 import { getAppointmentByDate } from "../../services/appointment-queries";
 import { useTimeSelection } from "../../hooks/useTimeSelection";
+import { AppointFormValues, AppointmentFormProps } from "../../types/appointment";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const {
@@ -50,7 +49,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     return () => subscription.unsubscribe()
   }, [form])
 
-  const { availableTimes, hasAvailableTimes } = useAvailableTimes({
+  const { availableTimes } = useAvailableTimes({
     selectedDate,
     totalDuration,
     dayAppointments,

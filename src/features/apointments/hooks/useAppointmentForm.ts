@@ -1,15 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AppointmentFormSchema } from '../services/form-schema';
-import { AppointFormValues, Appointment } from '../types/appointment';
+import {
+  AppointFormValues,
+  Appointment,
+  AppointmentFormProps,
+} from '../types/appointment';
 import { format, setHours, setMinutes } from 'date-fns';
 import {
   createAppointment,
   updateAppointment,
 } from '../services/appointment-mutations';
 import { toast } from 'sonner';
-import { AppointmentFormProps } from '../types/appointment-props';
+import { AppointmentFormSchema } from '../services/appointment-schema';
 
 export function useAppointmentForm({
   appointment,
@@ -36,8 +39,7 @@ export function useAppointmentForm({
     const [hour, minute] = data.time.split(':');
 
     const scheduleAt = setMinutes(
-      // etapa 2 - ajusta o minuto
-      setHours(data.scheduleAt, Number(hour)), // etapa 1 - ajusta a hora
+      setHours(data.scheduleAt, Number(hour)),
       Number(minute)
     );
 
@@ -69,7 +71,7 @@ export function useAppointmentForm({
   useEffect(() => {
     const servicesIds = form.watch('servicesIds');
 
-    const total = servicesIds.reduce((sum, id) => {
+    const total = servicesIds.reduce((sum: number, id: string) => {
       const service = allServices?.find((s) => s.id === id);
       return sum + (service?.duration || 0);
     }, 0);
