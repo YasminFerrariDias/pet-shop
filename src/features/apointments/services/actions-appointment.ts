@@ -1,58 +1,13 @@
 'use server';
 
-import z from 'zod';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { endOfDay, startOfDay } from 'date-fns';
 import { validateBusinessHours } from './date';
 import { checkAvailability } from './date-server';
-
-const appointmentSchema = z.object({
-  tutorName: z.string(),
-  petName: z.string(),
-  phone: z.string(),
-  servicesIds: z.array(z.string()),
-  scheduleAt: z.date(),
-});
-
-type AppointmentData = z.infer<typeof appointmentSchema>;
-
-// VALIDAÇÃO SE EXISTE AGENDAMENTO
-export async function appointmentExist(id: string) {
-  const appointment = await prisma.appointment.findUnique({
-    where: { id },
-  });
-
-  return appointment !== null;
-}
-
-// CRIAÇÃO DO AGENDAMENTO
-export async function createAppointment(data: AppointmentData) {
-  try {
-    const parsedData = appointmentSchema.parse(data);
-
-    const validation = validateBusinessHours(parsedData.scheduleAt);
-    if (!validation.valid) return validation;
-
-    const conflict = await checkAvailability(
-      parsedData.scheduleAt,
-      parsedData.servicesIds
-    );
-    if (!conflict.valid) return conflict;
-
-    await prisma?.appointment.create({
-      data: {
-        ...parsedData,
-      },
-    });
-
-    revalidatePath('/');
-    return { success: true };
-  } catch (error) {
-    console.error('Erro ao criar agendamento: ', error);
-    return { error: 'Erro ao criar o agendamento' };
-  }
-}
+import { appointmentSchema } from './appointment-schema';
+import { AppointmentData } from '../types/appointment';
+import { appointmentExist } from './appointment-schema.server';
 
 // ATUALIZAÇÃO DO AGENDAMENTO
 export async function updateAppointment(id: string, data: AppointmentData) {
