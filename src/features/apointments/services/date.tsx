@@ -1,5 +1,12 @@
 import { addMinutes } from "date-fns"
 
+// Horário de atendimento
+const OPENING_HOURS = {
+  morning: { start: 9, end: 12 },
+  afternoon: { start: 13, end: 18 },
+  evening: { start: 19, end: 21 }
+} as const
+
 const PERIOD_LIMIT = {
   morning: 12 * 60,
   afternoon: 18 * 60,

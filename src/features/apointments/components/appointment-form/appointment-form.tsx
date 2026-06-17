@@ -16,6 +16,8 @@ import { TagSelector } from "../tag-selector";
 import { validateEndTime } from '@/features/apointments/services/date';
 import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { AppointmentFormProps } from "../../types/appointment-props";
+import { useAvailableTimes } from "../../hooks/useAvailableTimes";
+import { useEffect, useState } from "react";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const {
@@ -29,6 +31,25 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     errorMessage,
     setErrorMessage,
   } = useAppointmentForm({ appointment, allServices })
+
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(form.getValues('scheduleAt'))
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'scheduleAt' || name === undefined) {
+        setSelectedDate(value.scheduleAt)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form])
+
+  const { availableTimes, hasAvailableTimes } = useAvailableTimes({
+    selectedDate,
+    totalDuration,
+    dayAppointments,
+  })
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -169,10 +190,18 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                           mode='single'
                           selected={field.value}
                           onSelect={async (date) => {
-                            field.onChange(date)
                             if (date) {
+                              form.setValue('scheduleAt', date, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true,
+                              })
+
                               const appointments = await getAppointmentByDate(date)
                               setDayAppointments(appointments)
+                            } else {
+                              form.setValue('scheduleAt', undefined as any)
+                              setDayAppointments([])
                             }
                           }}
                           disabled={(date) => date < startOfToday()}
@@ -226,49 +255,17 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                           <SelectValue placeholder="--:-- --" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(() => {
-                            const now = new Date()
-                            const selectedDate = form.getValues('scheduleAt')
-
-                            const availableTimes = TIME_OPTION.filter((time) => {
-                              const isToday = selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd')
-
-                              if (isToday && selectedDate) {
-                                const [hour, minute] = time.split(':').map(Number)
-                                const optionDate = new Date(selectedDate)
-                                optionDate.setHours(hour, minute, 0, 0)
-                                if (optionDate < now) return false
-                              }
-
-                              const isOccupied = dayAppointments.some((apt) => format(apt.scheduleAt, 'HH:mm') === time)
-                              if (isOccupied) return false
-
-                              if (selectedDate && totalDuration > 0) {
-                                const [hour, minute] = time.split(':').map(Number)
-                                const scheduleAt = new Date(selectedDate)
-                                scheduleAt.setHours(hour, minute, 0, 0)
-                                const result = validateEndTime(scheduleAt, totalDuration)
-
-                                if (!result.valid) return false
-                              }
-
-                              return true
-                            })
-
-                            if (availableTimes.length === 0) {
-                              return (
-                                <div className="p-2 text-center text-sm">
-                                  Nenhum horário disponível
-                                </div>
-                              )
-                            }
-
-                            return availableTimes.map((time) => (
+                          {availableTimes.length === 0 ? (
+                            <div className="p-2 text-center text-sm">
+                              Nenhum horário disponível
+                            </div>
+                          ) : (
+                            availableTimes.map((time: string) => (
                               <SelectItem key={time} value={time}>
                                 {time}
                               </SelectItem>
                             ))
-                          })()}
+                          )}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -301,22 +298,3 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     </Dialog >
   )
 }
-
-const generateTimeOptions = (): string[] => {
-  const times = []
-
-  for (let hour = 9; hour <= 21; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      if (hour === 21 && minute > 0) break;
-      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-      times.push(timeString)
-    }
-  }
-
-  return times;
-}
-
-const TIME_OPTION = generateTimeOptions().filter((time) => {
-  const hour = parseInt(time.split(':')[0])
-  return (hour >= 9 && hour < 12) || (hour >= 13 && hour < 18) || (hour >= 19 && hour < 21)
-})

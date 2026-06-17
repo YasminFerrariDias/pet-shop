@@ -1,5 +1,4 @@
 'use client'
-
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -35,7 +34,7 @@ type CalendarViewProps = {
   minHours?: number
   maxHours?: number
   view?: string
-  selectedDate: Date
+  selectedDate?: Date
   onViewChange?: (view: string) => void
   onDateChange?: (date: Date) => void
   originalAppointments?: Appointment[]
@@ -43,7 +42,7 @@ type CalendarViewProps = {
   currentView?: string
 }
 
-export const CalendarView = ({ currentView, originalAppointments, allServices, events, minHours, maxHours, view, selectedDate, onViewChange, onDateChange }: CalendarViewProps) => {
+export const CalendarView = ({ selectedDate = new Date(), currentView, originalAppointments, allServices, events, minHours, maxHours, view, onViewChange, onDateChange }: CalendarViewProps) => {
   const minDate = new Date(selectedDate)
   minDate.setHours(minHours ?? 0, 0, 0)
 
@@ -69,6 +68,7 @@ export const CalendarView = ({ currentView, originalAppointments, allServices, e
     <div className={view === 'day' ? 'h-auto' : 'h-150'}>
       <Calendar
         localizer={localizer}
+        key={selectedDate.toISOString()}
         events={events}
         startAccessor='start'
         endAccessor='end'
@@ -107,3 +107,4 @@ export const CalendarView = ({ currentView, originalAppointments, allServices, e
     </div>
   )
 }
+
