@@ -18,6 +18,7 @@ import { AppointmentFormProps } from "../../types/appointment-props";
 import { useAvailableTimes } from "../../hooks/useAvailableTimes";
 import { useEffect, useState } from "react";
 import { getAppointmentByDate } from "../../services/appointment-queries";
+import { useTimeSelection } from "../../hooks/useTimeSelection";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const {
@@ -31,6 +32,11 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     errorMessage,
     setErrorMessage,
   } = useAppointmentForm({ appointment, allServices })
+  const { handleTimeChange } = useTimeSelection(
+    form,
+    totalDuration,
+    setErrorMessage
+  );
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(form.getValues('scheduleAt'))
 
@@ -49,7 +55,6 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
     totalDuration,
     dayAppointments,
   })
-
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -226,25 +231,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                         disabled={!form.watch('scheduleAt')}
                         onValueChange={(selectedTime) => {
                           field.onChange(selectedTime)
-
-                          const selectedDate = form.getValues('scheduleAt')
-
-                          if (!selectedDate) {
-                            setErrorMessage('Selecione uma data primeiro')
-                            return
-                          }
-
-                          const [hour, minute] = selectedTime.split(':').map(Number);
-
-                          const scheduleAt = new Date(selectedDate);
-                          scheduleAt.setHours(hour, minute, 0, 0);
-
-                          const result = validateEndTime(scheduleAt, totalDuration);
-                          if (!result.valid) {
-                            setErrorMessage(result.error || 'Horário inválido');
-                          } else {
-                            setErrorMessage('');
-                          }
+                          handleTimeChange(selectedTime)
                         }}
                       >
                         <SelectTrigger
@@ -255,7 +242,7 @@ export const AppointmentForm = ({ appointment, children, allServices }: Appointm
                           <SelectValue placeholder="--:-- --" />
                           {field.value && !availableTimes.includes(field.value)
                             ? `${field.value} (indisponivel)`
-                            : field.value}
+                            : ''}
                         </SelectTrigger>
                         <SelectContent>
                           {availableTimes.length === 0 ? (

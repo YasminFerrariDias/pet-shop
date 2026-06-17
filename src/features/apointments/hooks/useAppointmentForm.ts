@@ -2,17 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AppointmentFormSchema } from '../services/form-schema';
-import { Appointment } from '../types/appointment';
+import { AppointFormValues, Appointment } from '../types/appointment';
 import { format, setHours, setMinutes } from 'date-fns';
 import {
   createAppointment,
   updateAppointment,
 } from '../services/appointment-mutations';
 import { toast } from 'sonner';
-import z from 'zod';
 import { AppointmentFormProps } from '../types/appointment-props';
-
-type AppointFormValues = z.infer<typeof AppointmentFormSchema>;
 
 export function useAppointmentForm({
   appointment,
