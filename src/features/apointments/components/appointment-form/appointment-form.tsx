@@ -17,7 +17,7 @@ import { useAppointmentForm } from "../../hooks/useAppointmentForm";
 import { AppointmentFormProps } from "../../types/appointment-props";
 import { useAvailableTimes } from "../../hooks/useAvailableTimes";
 import { useEffect, useState } from "react";
-import { getAppointmentByDate } from "../../services/appointment-schema.server";
+import { getAppointmentByDate } from "../../services/appointment-queries";
 
 export const AppointmentForm = ({ appointment, children, allServices }: AppointmentFormProps) => {
   const {

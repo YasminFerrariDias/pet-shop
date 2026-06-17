@@ -7,7 +7,7 @@ import { format, setHours, setMinutes } from 'date-fns';
 import {
   createAppointment,
   updateAppointment,
-} from '../services/actions-appointment';
+} from '../services/appointment-mutations';
 import { toast } from 'sonner';
 import z from 'zod';
 import { AppointmentFormProps } from '../types/appointment-props';

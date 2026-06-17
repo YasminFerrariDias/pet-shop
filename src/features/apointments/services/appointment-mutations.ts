@@ -2,12 +2,11 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { endOfDay, startOfDay } from 'date-fns';
 import { validateBusinessHours } from './date';
 import { checkAvailability } from './date-server';
 import { appointmentSchema } from './appointment-schema';
 import { AppointmentData } from '../types/appointment';
-import { appointmentExist } from './appointment-schema.server';
+import { appointmentExist } from './appointment-queries';
 import { AppointmentFormSchema } from './form-schema';
 
 // CRIAÇÃO DO AGENDAMENTO
