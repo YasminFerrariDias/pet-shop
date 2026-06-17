@@ -12,14 +12,7 @@ import { toast } from "sonner";
 import { createService, updateService } from "@/features/services/services/actions-service";
 import { useEffect, useState } from "react";
 import { Service } from "@/features/services/types/service";
-
-const serviceFormSchema = z.object({
-  serviceName: z.string().min(3, "O nome do serviço é obrigatório"),
-  duration: z.number()
-    .min(1, "A duração deve ser maior que 0")
-    .max(480, "A duração não pode exceder de 8 horas"),
-  price: z.number().min(1, "O preço do serviço é obrigatório"),
-})
+import { serviceFormSchema } from "../../services/form-schema";
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 

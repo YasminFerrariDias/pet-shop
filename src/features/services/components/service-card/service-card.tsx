@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Pen as EditIcon, Trash2 as DeleteIcon, Loader2 as LoadingIcon } from "lucide-react"
 import { Service } from "@/features/services/types/service"
 import { formatDuration } from "@/utils/formatDuration-utils"
-import { useServiceActions } from "../hooks/useServiceActions"
+import { useServiceActions } from "../../hooks/useServiceActions"
 
 type ServiceCardProps = {
   service: Service
