@@ -1,6 +1,6 @@
 # Pet Shop
 
-Aplicação web de e-commerce para pet shop desenvolvida com Next.js, Prisma e PostgreSQL, com deploy na Vercel.
+Aplicação web de e-commerce para pet shop desenvolvida com Next.js, Prisma e PostgreSQL.
 
 ## Tecnologias
 
@@ -17,24 +17,17 @@ Aplicação web de e-commerce para pet shop desenvolvida com Next.js, Prisma e P
 Requisito: [Node.js](https://nodejs.org/), [Docker](https://www.docker.com/) e [pnpm](https://pnpm.io/)
 
 ```bash
-# Instalar dependências
 pnpm install
-
-# Subir o banco de dados
 docker-compose up -d
-
-# Configurar variáveis de ambiente
 cp .env.example .env
-
-# Rodar as migrations
 pnpm prisma migrate dev
-
-# Iniciar o servidor
 pnpm dev
 ```
 
-Acesse: `http://localhost:3000`
-
 ## Deploy
 
-[pet-shop-five-topaz.vercel.app](https://pet-shop-five-topaz.vercel.app)
+[Pet Shop](https://pet-shop-five-topaz.vercel.app)
+
+## Sobre
+
+Projeto fullstack desenvolvido para praticar Next.js com App Router, integração com banco de dados via Prisma e deploy na Vercel.
